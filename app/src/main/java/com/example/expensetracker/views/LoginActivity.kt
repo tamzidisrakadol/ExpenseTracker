@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.expensetracker.R
 import com.example.expensetracker.daos.UserDaos
@@ -17,27 +19,30 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val RC_SIGN_IN: Int =123
+    private val RC_SIGN_IN: Int = 123
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var googleSignInClient:GoogleSignInClient
+    private lateinit var googleSignInClient: GoogleSignInClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding=ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        firebaseAuth = FirebaseAuth.getInstance()
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.your_web_client_id))
             .requestEmail()
             .build()
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
-
 
         binding.signInBtn.setOnClickListener {
             signInWithGoogle()
@@ -48,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         val currentUser = FirebaseAuth.getInstance().currentUser
-        if (currentUser!=null){
+        if (currentUser != null) {
             updateUI()
         }
     }
@@ -59,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
         startActivityForResult(signInIntent, RC_SIGN_IN)
     }
 
-    private  fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
+    private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         val authResult = firebaseAuth.signInWithCredential(credential)
 
@@ -75,8 +80,10 @@ class LoginActivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 lifecycleScope.launch(Dispatchers.IO) {
                     firebaseAuthWithGoogle(account!!)
-                    withContext(Dispatchers.Main){
-                       updateUI()
+                    withContext(Dispatchers.Main) {
+                        binding.progressbar.visibility = View.VISIBLE
+                        delay(3000L)
+                        updateUI()
                     }
                 }
             } catch (e: ApiException) {
@@ -86,13 +93,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    private fun updateUI(){
+    private fun updateUI() {
         val fUser = FirebaseAuth.getInstance().currentUser
-        if (fUser!=null){
-            val user = User(fUser.uid,fUser.displayName,fUser.photoUrl.toString())
+        if (fUser != null) {
+            val user = User(fUser.uid, fUser.displayName, fUser.photoUrl.toString())
             val userDaos = UserDaos()
             userDaos.addUser(user)
-            val intent = Intent(this,MainActivity::class.java)
+
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
