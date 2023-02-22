@@ -4,6 +4,7 @@ import com.example.expensetracker.model.User
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class UserDaos {
 
