@@ -16,7 +16,7 @@ class UserDaos {
     fun addUser(user: User?) {
         user?.let {
             GlobalScope.launch {
-                userCollection.document(user.uId).set(it)
+                userCollection.document(user.uid).set(it)
             }
         }
     }
