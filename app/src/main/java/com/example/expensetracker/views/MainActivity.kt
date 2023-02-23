@@ -1,6 +1,5 @@
 package com.example.expensetracker.views
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,25 +11,28 @@ import com.example.expensetracker.R
 import com.example.expensetracker.adapter.OnItemClickListener
 import com.example.expensetracker.adapter.TransitionAdapter
 import com.example.expensetracker.daos.ExpenseDao
-import com.example.expensetracker.databinding.ActivityLoginBinding
 import com.example.expensetracker.databinding.ActivityMainBinding
 import com.example.expensetracker.model.Transition
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
-import java.util.Calendar
 
 class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private var transitionModelList = mutableListOf<Transition>()
     private lateinit var adapter: TransitionAdapter
     val expenseDao = ExpenseDao()
+    var income: Long = 0L
+    var expense: Long = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         adapter = TransitionAdapter(transitionModelList, this, this)
+
         //add transitionBtn
         binding.transitionBtn.setOnClickListener {
             val intent = Intent(this@MainActivity, AddExpenseActivity::class.java)
@@ -46,7 +48,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             finish()
         }
 
-
         setUpFireStore()
         binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
@@ -54,16 +55,28 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     override fun onResume() {
         super.onResume()
+        income = 0L
+        expense = 0L
         setUpFireStore()
     }
+
 
     private fun setUpFireStore() {
         expenseDao.getExpenseList()
             .addOnSuccessListener {
                 transitionModelList.clear()
+                income = 0L
+                expense = 0L
                 for (document in it) {
                     val transitions = document.toObject(Transition::class.java)
                     transitions.expenseId = document.id
+                    if (transitions.type=="income"){
+                        income += transitions.amount
+                        Log.d("tag","income $income")
+                    }else{
+                        expense += transitions.amount
+                        Log.d("tag","expense $expense")
+                    }
                     transitionModelList.add(transitions)
                 }
                 binding.recyclerView.adapter = adapter
@@ -74,6 +87,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     binding.remainBalanceTV.text = "TK 0"
                 }
                 adapter.notifyDataSetChanged()
+                setupPieChart()
             }
 
     }
@@ -92,6 +106,29 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
             }
 
+    }
+
+    private fun setupPieChart() {
+        val pieList = mutableListOf<PieEntry>()
+        val colorList = mutableListOf<Int>()
+
+        if (income != 0L) {
+            pieList.add(PieEntry(income.toFloat(), "income"))
+            colorList.add(resources.getColor(R.color.purple_200))
+        }
+
+        if (expense != 0L) {
+            pieList.add(PieEntry(expense.toFloat(), "expense"))
+            colorList.add(resources.getColor(R.color.teal_700))
+        }
+        val balance = income - expense
+
+        val pieDataSet = PieDataSet(pieList, balance.toString())
+        pieDataSet.colors = colorList
+        val pieData = PieData(pieDataSet)
+
+        binding.piechart.data = pieData
+        binding.piechart.invalidate()
     }
 
 }
