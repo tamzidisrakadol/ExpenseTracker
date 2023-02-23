@@ -18,30 +18,53 @@ import java.util.Date
 
 class ExpenseDao {
 
-    private val db= FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
     private val expenseCollection = db.collection("expenses")
 
 
-    fun addExpense(transition: Transition){
+
+
+    fun addExpense(transition: Transition) {
         GlobalScope.launch {
             expenseCollection.add(transition)
         }
     }
 
-    fun getExpensesForMonth(month: Int):Task<QuerySnapshot>{
+    fun getExpensesForMonth(month: Int): Task<QuerySnapshot> {
 
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.MONTH,month)
+        calendar.set(Calendar.MONTH, month)
 
         val startOfMonth = calendar.time
-        calendar.add(Calendar.MONTH,1)
+        calendar.add(Calendar.MONTH, 1)
         val endOfMonth = calendar.time
 
         return expenseCollection
-            .whereGreaterThanOrEqualTo("date",startOfMonth)
-            .whereLessThan("date",endOfMonth)
+            .whereGreaterThanOrEqualTo("date", startOfMonth)
+            .whereLessThan("date", endOfMonth)
             .get()
 
+    }
+
+    fun getExpenseList(): Task<QuerySnapshot> {
+        return expenseCollection
+            .whereEqualTo("uid", FirebaseAuth.getInstance().uid)
+            .get()
+    }
+
+
+    fun displayRemainBalance(transition: List<Transition>): Long {
+        var income = 0L
+        var expense = 0L
+        transition.forEach {
+            if (it.type == "income") {
+                income += it.amount
+            } else {
+                expense += it.amount
+            }
+        }
+        var remainingBalance = income - expense
+        return remainingBalance
     }
 
 

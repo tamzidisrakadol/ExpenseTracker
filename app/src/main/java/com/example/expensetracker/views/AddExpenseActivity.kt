@@ -11,6 +11,7 @@ import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityAddExpenseBinding
 import com.example.expensetracker.model.Transition
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -84,8 +85,6 @@ class AddExpenseActivity : AppCompatActivity() {
             val expenseDao = ExpenseDao()
             expenseDao.addExpense(transition)
             Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show()
-
-
             val intent = Intent(this@AddExpenseActivity,MainActivity::class.java)
             startActivity(intent)
             finish()
