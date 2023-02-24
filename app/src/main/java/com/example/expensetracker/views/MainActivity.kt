@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.R
@@ -18,14 +19,18 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private var transitionModelList = mutableListOf<Transition>()
     private lateinit var adapter: TransitionAdapter
-    val expenseDao = ExpenseDao()
-    var income: Long = 0L
-    var expense: Long = 0L
+    private val expenseDao = ExpenseDao()
+    private var income: Long = 0L
+    private var expense: Long = 0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -51,7 +56,24 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         setUpFireStore()
         binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
+
+        //reset btn
+        binding.resetBtn.setOnClickListener {
+            lifecycleScope.launch {
+                expenseDao.deleteAllData()
+                withContext(Dispatchers.Main){
+                    delay(2000L)
+                    setUpFireStore()
+                    transitionModelList.clear()
+                    adapter.notifyDataSetChanged()
+                }
+
+            }
+
+        }
+
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -72,10 +94,8 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     transitions.expenseId = document.id
                     if (transitions.type=="income"){
                         income += transitions.amount
-                        Log.d("tag","income $income")
                     }else{
                         expense += transitions.amount
-                        Log.d("tag","expense $expense")
                     }
                     transitionModelList.add(transitions)
                 }
