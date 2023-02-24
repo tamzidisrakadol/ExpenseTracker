@@ -26,9 +26,7 @@ class AddExpenseActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        binding.selectDateTV.setOnClickListener {
-            pickUpDate(it)
-        }
+
 
         binding.submitBtn.setOnClickListener {
             createTransition()
@@ -36,34 +34,6 @@ class AddExpenseActivity : AppCompatActivity() {
 
     }
 
-
-    private fun pickUpDate(view: View) {
-
-        val year = myCalendar.get(Calendar.YEAR)
-        val month = myCalendar.get(Calendar.MONTH)
-        val day = myCalendar.get(Calendar.DAY_OF_MONTH)
-
-
-        //open the calendar
-        val dpd = DatePickerDialog(
-            this,
-            DatePickerDialog.OnDateSetListener { view, selectedYear, selectedMonth, selectedDayOfMonth ->
-
-                var selectedDate = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
-                binding.selectDateTV.text = selectedDate
-                val sdf = SimpleDateFormat("dd/MM/yyy", Locale.ENGLISH)
-                myCalendar.set(year,month,day)
-                dateToSdf= myCalendar.time
-
-
-            },
-            year, month, day
-        )
-
-        //setting the max date in Calendar
-        dpd.datePicker.maxDate = Date().time - 86400000
-        dpd.show()
-    }
 
     private fun createTransition(){
         val userID = FirebaseAuth.getInstance().currentUser!!.uid

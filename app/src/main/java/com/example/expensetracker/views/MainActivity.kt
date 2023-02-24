@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         }
 
         setUpFireStore()
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
 
         //reset btn
@@ -69,7 +69,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 }
 
             }
-
         }
 
     }
@@ -134,12 +133,12 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
         if (income != 0L) {
             pieList.add(PieEntry(income.toFloat(), "income"))
-            colorList.add(resources.getColor(R.color.purple_200))
+            colorList.add(resources.getColor(R.color.Teal_green))
         }
 
         if (expense != 0L) {
             pieList.add(PieEntry(expense.toFloat(), "expense"))
-            colorList.add(resources.getColor(R.color.teal_700))
+            colorList.add(resources.getColor(R.color.scarlet_red))
         }
         val balance = income - expense
 

@@ -6,31 +6,52 @@
     android:layout_height="match_parent"
     tools:context=".views.AddExpenseActivity">
 
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="@dimen/_200sdp"
+        android:src="@drawable/pic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:layout_width="@dimen/_290sdp"
-        android:layout_height="@dimen/_390sdp"
-        android:layout_marginTop="@dimen/_100sdp"
+        android:layout_height="@dimen/_320sdp"
+        android:padding="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_20sdp"
         app:cardElevation="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/_5sdp">
 
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/oswald"
+                android:text="Add Transaction"
+                android:textColor="@color/Teal_green"
+                android:textSize="@dimen/_18sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLayout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/textView5"
+                tools:layout_editor_absoluteX="7dp">
 
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -98,38 +119,25 @@
                     android:id="@+id/incomeRadioBtn"
                     android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
-                    android:text="Income"/>
+                    android:text="Income" />
 
 
                 <RadioButton
                     android:id="@+id/expenseRadioBtn"
                     android:layout_width="@dimen/_100sdp"
                     android:layout_height="wrap_content"
-                    android:text="Expense"/>
+                    android:text="Expense" />
 
             </RadioGroup>
-
-
-            <TextView
-                android:id="@+id/selectDateTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:hint="Select Date"
-                android:textSize="@dimen/_20sdp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
 
             <Button
                 android:id="@+id/submitBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="108dp"
+                android:layout_marginTop="32dp"
                 android:text="submit"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
