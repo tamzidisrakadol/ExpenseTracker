@@ -1,5 +1,6 @@
 package com.example.expensetracker.views
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,12 +9,14 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.expensetracker.R
 import com.example.expensetracker.adapter.OnItemClickListener
 import com.example.expensetracker.adapter.TransitionAdapter
 import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityMainBinding
 import com.example.expensetracker.model.Transition
+import com.example.expensetracker.model.User
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -28,6 +31,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
     private var transitionModelList = mutableListOf<Transition>()
     private lateinit var adapter: TransitionAdapter
+
     private val expenseDao = ExpenseDao()
     private var income: Long = 0L
     private var expense: Long = 0L
@@ -35,6 +39,8 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        loadProfilePic()
 
         adapter = TransitionAdapter(transitionModelList, this, this)
 
@@ -148,6 +154,28 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
         binding.piechart.data = pieData
         binding.piechart.invalidate()
+    }
+
+    private fun loadProfilePic(){
+        val userID = FirebaseAuth.getInstance().currentUser!!.uid
+        val users = FirebaseFirestore.getInstance().collection("users").document(userID)
+        users.get().addOnSuccessListener {
+            if (it.exists()){
+                val user = it.toObject(User::class.java)
+                val imgUrl = user!!.imgUrl
+
+                Glide
+                    .with(this)
+                    .load(imgUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .into(binding.imgView)
+            }else{
+                Log.d("tag","No such Document")
+            }
+        }.addOnFailureListener {
+            Log.d("tag","$it")
+        }
     }
 
 }
