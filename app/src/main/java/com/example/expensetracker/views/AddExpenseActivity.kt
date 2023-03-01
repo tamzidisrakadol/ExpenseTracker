@@ -17,19 +17,19 @@ import java.util.*
 
 class AddExpenseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddExpenseBinding
-    private lateinit var dateToSdf:Date
-    val myCalendar = Calendar.getInstance()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
-
         binding.submitBtn.setOnClickListener {
             createTransition()
+        }
+        binding.testBTn.setOnClickListener {
+            val intent = Intent(this@AddExpenseActivity,FetchDataByDateWise::class.java)
+            startActivity(intent)
         }
 
     }
@@ -42,6 +42,7 @@ class AddExpenseActivity : AppCompatActivity() {
         val note = binding.noteEditText.text.toString()
         val category = binding.categoryEditText.text.toString()
         var type:String = ""
+
         val isIncomeRadioChecked:Boolean =binding.incomeRadioBtn.isChecked
         if (isIncomeRadioChecked){
             type = "income"
@@ -60,6 +61,7 @@ class AddExpenseActivity : AppCompatActivity() {
             finish()
 
         }else{
+            Toast.makeText(this, "Please fill all the requirements", Toast.LENGTH_SHORT).show()
             return
         }
     }

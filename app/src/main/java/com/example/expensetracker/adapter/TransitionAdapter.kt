@@ -1,14 +1,12 @@
 package com.example.expensetracker.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.databinding.ItemLayoutBinding
 import com.example.expensetracker.model.Transition
-import com.google.firebase.firestore.FirebaseFirestore
+
 
 class TransitionAdapter(val tlist:List<Transition>,val context: Context,val onItemClickListener: OnItemClickListener):RecyclerView.Adapter<TransitionAdapter.ViewHolder>(){
     private lateinit var itemLayoutBinding: ItemLayoutBinding

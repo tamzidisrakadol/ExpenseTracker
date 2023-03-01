@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.FetchDataByDateWise">
+
+
+    <EditText
+        android:id="@+id/testDataEditText"
+        android:layout_width="181dp"
+        android:layout_height="44dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:hint="testData"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/categoryTestET"
+        android:layout_width="@dimen/_141sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:hint="category"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/testDataEditText" />
+
+
+    <TextView
+        android:id="@+id/dateTV"
+        android:layout_width="@dimen/_160sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="---SELECT DATE---"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:fontFamily="@font/oswald"
+        android:textSize="@dimen/_12sdp"
+        android:elevation="@dimen/_20sdp"
+        android:background="#989F9F"
+        android:drawableRight="@drawable/calendar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categoryTestET" />
+
+
+    <Button
+        android:id="@+id/postBtn"
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
+        android:text="post"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_2sdp"
+        android:layout_marginTop="32dp"
+        android:background="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateTV" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fetchDataRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
