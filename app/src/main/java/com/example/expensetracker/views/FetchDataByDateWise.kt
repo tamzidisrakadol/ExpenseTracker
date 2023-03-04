@@ -17,6 +17,7 @@ import com.example.expensetracker.model.TestDataModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,7 +52,8 @@ class FetchDataByDateWise : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val oneDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        Log.d("tag","day $oneDate")
+        val nameofMonth: String = Calendar.getInstance().getDisplayName(Calendar.MONTH,Calendar.LONG,Locale.getDefault())
+        Log.d("tag","day $oneDate , $nameofMonth")
         if (oneDate == 5){
             val alertDialog = AlertDialog.Builder(this)
             alertDialog.setMessage("Start of the Month")
@@ -62,6 +64,7 @@ class FetchDataByDateWise : AppCompatActivity() {
             val builder = alertDialog.create()
             builder.show()
         }
+
     }
 
 
@@ -73,6 +76,7 @@ class FetchDataByDateWise : AppCompatActivity() {
         val year = myCalendar.get(Calendar.YEAR)
         val month = myCalendar.get(Calendar.MONTH)
         val day = myCalendar.get(Calendar.DAY_OF_MONTH)
+
 
         val dpd = DatePickerDialog(
             this,
@@ -96,9 +100,11 @@ class FetchDataByDateWise : AppCompatActivity() {
         val dataId = UUID.randomUUID().toString()
         val nData = binding.testDataEditText.text.toString()
         val categoryData = binding.categoryTestET.text.toString()
+        val months = Calendar.getInstance().getDisplayName(Calendar.MONTH,Calendar.LONG,Locale.getDefault())
+
 
         if (nData.isNotEmpty() && categoryData.isNotEmpty() && isDateChanged) {
-            testDocument(userId, dataId, nData, categoryData, castToDate)
+            testDocument(userId, dataId, nData, categoryData,months, castToDate)
 
             Toast.makeText(this@FetchDataByDateWise, "successfully uploaded", Toast.LENGTH_SHORT)
                 .show()
@@ -124,11 +130,12 @@ class FetchDataByDateWise : AppCompatActivity() {
         id: String,
         nData: String,
         nCategory: String,
+        month :String,
         date: Date
     ) {
         val db = FirebaseFirestore.getInstance()
         val collection = db.collection("testData")
-        val testDataModel = TestDataModel(userId, id, nCategory, nData, Timestamp(date))
+        val testDataModel = TestDataModel(userId, id, nCategory, nData,month,Timestamp(date))
 
         lifecycleScope.launch {
             collection.add(testDataModel)
@@ -137,9 +144,11 @@ class FetchDataByDateWise : AppCompatActivity() {
     }
 
     private fun getData() {
+        val months = Calendar.getInstance().getDisplayName(Calendar.MONTH,Calendar.LONG,Locale.getDefault())
         FirebaseFirestore.getInstance()
             .collection("testData")
             .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
+            .whereEqualTo("month",months)
             .get()
             .addOnSuccessListener {
                 for (document in it) {
