@@ -11,8 +11,12 @@
         android:layout_height="@dimen/_90sdp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        app:cardElevation="@dimen/_20sdp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
         app:cardCornerRadius="@dimen/_20sdp"
+        app:cardElevation="@dimen/_20sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -23,7 +27,7 @@
 
 
             <TextView
-                android:id="@+id/testdata"
+                android:id="@+id/nData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -41,11 +45,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="category"
                 android:maxLines="1"
+                android:text="category"
                 android:textSize="@dimen/_15sdp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/testdata" />
+                app:layout_constraintTop_toBottomOf="@+id/nData" />
 
             <TextView
                 android:id="@+id/testDateTV"

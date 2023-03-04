@@ -5,6 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.databinding.TestitemlayoutBinding
 import com.example.expensetracker.model.TestDataModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerView.Adapter<TestDataAdapter.ViewHolder>() {
 
@@ -28,9 +30,16 @@ class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerVi
     class ViewHolder(private var testItemLayoutBinding: TestitemlayoutBinding):RecyclerView.ViewHolder(testItemLayoutBinding.root){
 
          fun bind(testDataModel: TestDataModel){
-             testItemLayoutBinding.testdata.text = testDataModel.nData
+
+             //converting date
+             val date = testDataModel.date.toDate()
+             val sdf = SimpleDateFormat("MMM dd", Locale.ENGLISH)
+             val formattedDate = sdf.format(date)
+
+
+             testItemLayoutBinding.nData.text = testDataModel.newData
              testItemLayoutBinding.testCategoryTV.text = testDataModel.categoryData
-             testItemLayoutBinding.testDateTV.text = testDataModel.date.toString()
+             testItemLayoutBinding.testDateTV.text = formattedDate
         }
 
     }

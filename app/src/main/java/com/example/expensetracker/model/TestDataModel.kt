@@ -5,7 +5,7 @@ import com.google.firebase.Timestamp
 data class TestDataModel(
     val uid:String="",
     val dataId:String ="",
-    val nData:String= "",
     val categoryData:String="",
+    val newData:String = "",
     val date: Timestamp = Timestamp.now()
 )

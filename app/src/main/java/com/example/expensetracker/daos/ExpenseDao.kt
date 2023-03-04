@@ -28,21 +28,21 @@ class ExpenseDao {
         }
     }
 
-//    fun getExpensesForMonth(month: Int): Task<QuerySnapshot> {
-//
-//        val calendar = Calendar.getInstance()
-//        calendar.set(Calendar.MONTH, month)
-//
-//        val startOfMonth = calendar.time
-//        calendar.add(Calendar.MONTH, 1)
-//        val endOfMonth = calendar.time
-//
-//        return expenseCollection
-//            .whereGreaterThanOrEqualTo("date", startOfMonth)
-//            .whereLessThan("date", endOfMonth)
-//            .get()
-//
-//    }
+    fun getExpensesForMonth(month: Int): Task<QuerySnapshot> {
+
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.MONTH, month)
+
+        val startOfMonth = calendar.time
+        calendar.add(Calendar.MONTH, 1)
+        val endOfMonth = calendar.time
+
+        return expenseCollection
+            .whereGreaterThanOrEqualTo("date", startOfMonth)
+            .whereLessThan("date", endOfMonth)
+            .get()
+
+    }
 
     fun getExpenseList(): Task<QuerySnapshot> {
         return expenseCollection
