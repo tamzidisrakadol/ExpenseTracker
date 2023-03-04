@@ -3,15 +3,20 @@ package com.example.expensetracker.views
 import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.expensetracker.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.expensetracker.adapter.TestDataAdapter
 import com.example.expensetracker.databinding.ActivityFetchDataByDateWiseBinding
 import com.example.expensetracker.model.TestDataModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,10 +25,16 @@ class FetchDataByDateWise : AppCompatActivity() {
     private lateinit var binding: ActivityFetchDataByDateWiseBinding
     private var isDateChanged:Boolean = false
     private lateinit var castToDate:Date
+    private var testDataModelList = mutableListOf<TestDataModel>()
+    private lateinit var testDataAdapter: TestDataAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFetchDataByDateWiseBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        getData()
+        testDataAdapter = TestDataAdapter(testDataModelList)
+        binding.fetchDataRecyclerView.layoutManager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)
 
 
         binding.dateTV.setOnClickListener {
@@ -85,6 +96,24 @@ class FetchDataByDateWise : AppCompatActivity() {
         lifecycleScope.launch {
             collection.add(testDataModel)
         }
+
+    }
+
+    private fun getData(){
+        FirebaseFirestore.getInstance()
+            .collection("testData")
+            .whereEqualTo("uid",FirebaseAuth.getInstance().currentUser!!.uid)
+            .get()
+            .addOnSuccessListener {
+                for (document in it){
+                    val testData = document.toObject(TestDataModel::class.java)
+                    testDataModelList.add(testData)
+                    binding.fetchDataRecyclerView.adapter = testDataAdapter
+                    Log.d("tag","All Data : $testDataModelList")
+                }
+                testDataAdapter.notifyDataSetChanged()
+
+            }
 
     }
 }

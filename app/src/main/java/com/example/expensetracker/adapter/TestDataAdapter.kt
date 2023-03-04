@@ -25,13 +25,12 @@ class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerVi
 
 
     }
-    class ViewHolder(testItemLayoutBinding: TestitemlayoutBinding):RecyclerView.ViewHolder(testItemLayoutBinding.root){
-        private lateinit var testItemLayoutBinding:TestitemlayoutBinding
+    class ViewHolder(private var testItemLayoutBinding: TestitemlayoutBinding):RecyclerView.ViewHolder(testItemLayoutBinding.root){
 
          fun bind(testDataModel: TestDataModel){
-             testItemLayoutBinding.testdataTV.text = testDataModel.nData
+             testItemLayoutBinding.testdata.text = testDataModel.nData
              testItemLayoutBinding.testCategoryTV.text = testDataModel.categoryData
-             testItemLayoutBinding.testdataTV.text = testDataModel.date.toString()
+             testItemLayoutBinding.testDateTV.text = testDataModel.date.toString()
         }
 
     }
