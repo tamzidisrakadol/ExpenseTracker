@@ -137,12 +137,6 @@ class FetchDataByDateWise : AppCompatActivity() {
     }
 
     private fun getData() {
-        val myCalendar = Calendar.getInstance()
-        val year = myCalendar.get(Calendar.YEAR)
-        val month = myCalendar.get(Calendar.MONTH)
-        val day = myCalendar.get(Calendar.DAY_OF_MONTH)
-        val startOfDay = Timestamp(Date(year, month, day, 0, 0, 0))
-        val endOfDay = Timestamp(Date(year, month, day, 23, 59, 59))
         FirebaseFirestore.getInstance()
             .collection("testData")
             .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
