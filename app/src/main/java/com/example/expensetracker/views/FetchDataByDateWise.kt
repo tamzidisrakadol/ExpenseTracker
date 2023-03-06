@@ -1,13 +1,15 @@
 package com.example.expensetracker.views
 
+import android.R
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.content.DialogInterface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +19,6 @@ import com.example.expensetracker.model.TestDataModel
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,6 +29,10 @@ class FetchDataByDateWise : AppCompatActivity() {
     private lateinit var castToDate: Date
     private var testDataModelList = mutableListOf<TestDataModel>()
     private lateinit var testDataAdapter: TestDataAdapter
+    private var nameOFMonth = mutableListOf("January","February","March","April","May","June")
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFetchDataByDateWiseBinding.inflate(layoutInflater)
@@ -37,8 +42,22 @@ class FetchDataByDateWise : AppCompatActivity() {
 
         getData()
         testDataAdapter = TestDataAdapter(testDataModelList)
-        binding.fetchDataRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        binding.fetchDataRecyclerView.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
 
+        val arrayAdapter = ArrayAdapter<String>(this,
+            R.layout.simple_spinner_dropdown_item,nameOFMonth)
+        binding.spinner.adapter= arrayAdapter
+        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                Toast.makeText(this@FetchDataByDateWise, nameOFMonth[p2], Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
 
         binding.dateTV.setOnClickListener {
             pickUpDate(it)
@@ -52,23 +71,21 @@ class FetchDataByDateWise : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val oneDate = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-        val nameofMonth: String = Calendar.getInstance().getDisplayName(Calendar.MONTH,Calendar.LONG,Locale.getDefault())
-        Log.d("tag","day $oneDate , $nameofMonth")
-        if (oneDate == 5){
+        val nameofMonth: String = Calendar.getInstance()
+            .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()) as String
+        Log.d("tag", "day $oneDate , $nameofMonth")
+        if (oneDate == 5) {
             val alertDialog = AlertDialog.Builder(this)
             alertDialog.setMessage("Start of the Month")
             alertDialog.setTitle("Congratulation")
-            alertDialog.setPositiveButton("Yes"){
-                    dialog, _ -> dialog.cancel()
+            alertDialog.setPositiveButton("Yes") { dialog, _ ->
+                dialog.cancel()
             }
             val builder = alertDialog.create()
             builder.show()
         }
 
     }
-
-
-
 
 
     private fun pickUpDate(view: View) {
@@ -100,11 +117,12 @@ class FetchDataByDateWise : AppCompatActivity() {
         val dataId = UUID.randomUUID().toString()
         val nData = binding.testDataEditText.text.toString()
         val categoryData = binding.categoryTestET.text.toString()
-        val months = Calendar.getInstance().getDisplayName(Calendar.MONTH,Calendar.LONG,Locale.getDefault())
+        val months = Calendar.getInstance()
+            .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
 
 
         if (nData.isNotEmpty() && categoryData.isNotEmpty() && isDateChanged) {
-            testDocument(userId, dataId, nData, categoryData,months, castToDate)
+            testDocument(userId, dataId, nData, categoryData, months, castToDate)
 
             Toast.makeText(this@FetchDataByDateWise, "successfully uploaded", Toast.LENGTH_SHORT)
                 .show()
@@ -130,12 +148,12 @@ class FetchDataByDateWise : AppCompatActivity() {
         id: String,
         nData: String,
         nCategory: String,
-        month :String,
+        month: String,
         date: Date
     ) {
         val db = FirebaseFirestore.getInstance()
         val collection = db.collection("testData")
-        val testDataModel = TestDataModel(userId, id, nCategory, nData,month,Timestamp(date))
+        val testDataModel = TestDataModel(userId, id, nCategory, nData, month, Timestamp(date))
 
         lifecycleScope.launch {
             collection.add(testDataModel)
@@ -144,11 +162,12 @@ class FetchDataByDateWise : AppCompatActivity() {
     }
 
     private fun getData() {
-        val months = Calendar.getInstance().getDisplayName(Calendar.MONTH,Calendar.LONG,Locale.getDefault())
+        val months = Calendar.getInstance()
+            .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
         FirebaseFirestore.getInstance()
             .collection("testData")
             .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
-            .whereEqualTo("month",months)
+            .whereEqualTo("month", months)
             .get()
             .addOnSuccessListener {
                 for (document in it) {

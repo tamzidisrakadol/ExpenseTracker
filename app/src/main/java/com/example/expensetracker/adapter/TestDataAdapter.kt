@@ -11,6 +11,26 @@ import java.util.*
 class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerView.Adapter<TestDataAdapter.ViewHolder>() {
 
 
+
+
+    class ViewHolder(private var testItemLayoutBinding: TestitemlayoutBinding):RecyclerView.ViewHolder(testItemLayoutBinding.root){
+
+        fun bind(testDataModel: TestDataModel){
+
+            //converting date
+            val date = testDataModel.date.toDate()
+            val sdf = SimpleDateFormat("MMM dd", Locale.ENGLISH)
+            val formattedDate = sdf.format(date)
+
+
+            testItemLayoutBinding.nData.text = testDataModel.newData
+            testItemLayoutBinding.testCategoryTV.text = testDataModel.categoryData
+            testItemLayoutBinding.testDateTV.text = formattedDate
+        }
+
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var testItemLayoutBinding = TestitemlayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return ViewHolder(testItemLayoutBinding)
@@ -24,24 +44,7 @@ class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerVi
         var testDataModel = testDataList[position]
         holder.bind(testDataModel)
 
-
-
     }
-    class ViewHolder(private var testItemLayoutBinding: TestitemlayoutBinding):RecyclerView.ViewHolder(testItemLayoutBinding.root){
 
-         fun bind(testDataModel: TestDataModel){
-
-             //converting date
-             val date = testDataModel.date.toDate()
-             val sdf = SimpleDateFormat("MMM dd", Locale.ENGLISH)
-             val formattedDate = sdf.format(date)
-
-
-             testItemLayoutBinding.nData.text = testDataModel.newData
-             testItemLayoutBinding.testCategoryTV.text = testDataModel.categoryData
-             testItemLayoutBinding.testDateTV.text = formattedDate
-        }
-
-    }
 
 }

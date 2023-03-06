@@ -81,4 +81,13 @@
         app:layout_constraintTop_toBottomOf="@+id/view2" />
 
 
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/postBtn" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
