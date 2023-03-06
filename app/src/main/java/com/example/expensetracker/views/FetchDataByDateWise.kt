@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.expensetracker.adapter.NewTestDataAdapter
 import com.example.expensetracker.adapter.TestDataAdapter
 import com.example.expensetracker.databinding.ActivityFetchDataByDateWiseBinding
 import com.example.expensetracker.model.TestDataModel
@@ -29,29 +30,48 @@ class FetchDataByDateWise : AppCompatActivity() {
     private lateinit var castToDate: Date
     private var testDataModelList = mutableListOf<TestDataModel>()
     private lateinit var testDataAdapter: TestDataAdapter
+    private lateinit var newTestDataAdapter: NewTestDataAdapter
+    private var newTestDataModelList = mutableListOf<TestDataModel>()
     private var nameOFMonth = mutableListOf("January","February","March","April","May","June")
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFetchDataByDateWiseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
         getData()
         testDataAdapter = TestDataAdapter(testDataModelList)
         binding.fetchDataRecyclerView.layoutManager =
-            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
+        newTestDataAdapter=NewTestDataAdapter(newTestDataModelList)
+        binding.newRecyclerView.layoutManager=LinearLayoutManager(this,RecyclerView.HORIZONTAL,false)
         val arrayAdapter = ArrayAdapter<String>(this,
             R.layout.simple_spinner_dropdown_item,nameOFMonth)
         binding.spinner.adapter= arrayAdapter
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 Toast.makeText(this@FetchDataByDateWise, nameOFMonth[p2], Toast.LENGTH_SHORT).show()
+                val selectedMonth = nameOFMonth[p2]
+                FirebaseFirestore.getInstance()
+                    .collection("testData")
+                    .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
+                    .whereEqualTo("month", selectedMonth)
+                    .get()
+                    .addOnSuccessListener {
+                        newTestDataModelList.clear()
+                        for (document in it) {
+                            val testData = document.toObject(TestDataModel::class.java)
+                            newTestDataModelList.add(testData)
+                            binding.newRecyclerView.adapter = newTestDataAdapter
+                            Log.d("tag", "All Data : $testDataModelList")
+                        }
+                        newTestDataAdapter.notifyDataSetChanged()
+
+                    }.addOnFailureListener {
+                        Log.d("tag", "exception $it")
+                    }
+
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
