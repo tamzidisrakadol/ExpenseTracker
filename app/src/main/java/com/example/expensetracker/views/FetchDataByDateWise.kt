@@ -53,6 +53,7 @@ class FetchDataByDateWise : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 Toast.makeText(this@FetchDataByDateWise, nameOFMonth[p2], Toast.LENGTH_SHORT).show()
                 val selectedMonth = nameOFMonth[p2]
+
                 FirebaseFirestore.getInstance()
                     .collection("testData")
                     .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
@@ -64,6 +65,15 @@ class FetchDataByDateWise : AppCompatActivity() {
                             val testData = document.toObject(TestDataModel::class.java)
                             newTestDataModelList.add(testData)
                             binding.newRecyclerView.adapter = newTestDataAdapter
+
+                            if (newTestDataAdapter.itemCount==0){
+                                binding.newRecyclerView.visibility=View.GONE
+                                binding.noDataTV.text="No expense is saved for this month"
+                            }else{
+                                binding.newRecyclerView.visibility = View.VISIBLE
+                                binding.noDataTV.visibility = View.GONE
+                            }
+
                             Log.d("tag", "All Data : $testDataModelList")
                         }
                         newTestDataAdapter.notifyDataSetChanged()
@@ -73,7 +83,6 @@ class FetchDataByDateWise : AppCompatActivity() {
                     }
 
             }
-
             override fun onNothingSelected(p0: AdapterView<*>?) {
 
             }
