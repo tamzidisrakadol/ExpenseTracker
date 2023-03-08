@@ -3,6 +3,7 @@ package com.example.expensetracker.views
 import android.R
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -73,7 +74,6 @@ class FetchDataByDateWise : AppCompatActivity() {
                                 binding.newRecyclerView.visibility = View.VISIBLE
                                 binding.noDataTV.visibility = View.GONE
                             }
-
                             Log.d("tag", "All Data : $testDataModelList")
                         }
                         newTestDataAdapter.notifyDataSetChanged()
@@ -93,6 +93,11 @@ class FetchDataByDateWise : AppCompatActivity() {
         }
         binding.postBtn.setOnClickListener {
             uploadDataToFireStore()
+        }
+
+        binding.reminderBtn.setOnClickListener {
+            val intent = Intent(this@FetchDataByDateWise,ReminderActivity::class.java)
+            startActivity(intent)
         }
 
     }
