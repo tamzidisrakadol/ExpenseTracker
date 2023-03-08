@@ -12,5 +12,7 @@ class ReminderActivity : AppCompatActivity() {
         binding = ActivityReminderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
     }
 }
