@@ -56,15 +56,6 @@ class ReminderActivity : AppCompatActivity() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-         notificationManager = NotificationManagerCompat.from(this@ReminderActivity)
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-
-            return
-        }
 
         binding.selectDateTV.setOnClickListener {
             pickUpDate(it)
