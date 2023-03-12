@@ -3,24 +3,23 @@ package com.example.expensetracker.views
 import android.Manifest
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.TimePicker
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.room.RoomDatabase
 import com.example.expensetracker.R
 import com.example.expensetracker.databinding.ActivityReminderBinding
 import com.example.expensetracker.db.ReminderDatabase
 import com.example.expensetracker.model.ReminderDataModel
+import com.example.expensetracker.services.AlarmReceiver
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -35,9 +34,16 @@ class ReminderActivity : AppCompatActivity() {
     private lateinit var castToTime:Date
     private val CHANNEL_ID = "ChannelId"
     private val CHANNEL_NAME = "channelname"
-    private val NOTIFICATION_ID = 0
+    private val NOTIFICATIONID = 0
     private lateinit var notification:Notification
     private lateinit var  notificationManager: NotificationManagerCompat
+    private lateinit var alarmManager: AlarmManager
+    private var year:Int=0
+    private var month:Int=0
+    private var day:Int=0
+    private var selectedHour:Int=0
+    private var selectedMin:Int=0
+
 
 
 
@@ -67,6 +73,7 @@ class ReminderActivity : AppCompatActivity() {
 
         binding.saveBtn.setOnClickListener {
             saveDataToRoom()
+            setAlarm()
         }
 
 
@@ -77,9 +84,9 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun pickUpDate(view: View) {
         val myCalendar = Calendar.getInstance()
-        val year = myCalendar.get(Calendar.YEAR)
-        val month = myCalendar.get(Calendar.MONTH)
-        val day = myCalendar.get(Calendar.DAY_OF_MONTH)
+        year = myCalendar.get(Calendar.YEAR)
+         month = myCalendar.get(Calendar.MONTH)
+         day = myCalendar.get(Calendar.DAY_OF_MONTH)
 
 
         val dpd = DatePickerDialog(
@@ -98,8 +105,8 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun pickUpTime(view: View) {
         val myCalendar = Calendar.getInstance()
-        val selectedHour = myCalendar.get(Calendar.HOUR)
-        val selectedMin = myCalendar.get(Calendar.MINUTE)
+         selectedHour = myCalendar.get(Calendar.HOUR)
+         selectedMin = myCalendar.get(Calendar.MINUTE)
 
 
         val mTimePicker = TimePickerDialog(this,
@@ -130,7 +137,6 @@ class ReminderActivity : AppCompatActivity() {
                 mProgressDialog.show()
                 delay(3000L)
                 mProgressDialog.dismiss()
-
                 //showing notification after saving data to ROOM
                 notificationManager = NotificationManagerCompat.from(this@ReminderActivity)
                 if (ActivityCompat.checkSelfPermission(
@@ -140,9 +146,7 @@ class ReminderActivity : AppCompatActivity() {
                 ) {
                     return@launch
                 }
-                notificationManager.notify(NOTIFICATION_ID,notification)
-
-
+                notificationManager.notify(NOTIFICATIONID,notification)
                 finish()
 
             }
@@ -162,6 +166,22 @@ class ReminderActivity : AppCompatActivity() {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
+
+    }
+
+    private fun setAlarm(){
+        val timeZone = TimeZone.getDefault()
+        val alarmCalendar = Calendar.getInstance(timeZone)
+        alarmCalendar.set(Calendar.YEAR,year)
+        alarmCalendar.set(Calendar.MONTH,month)
+        alarmCalendar.set(Calendar.DAY_OF_MONTH,day)
+        alarmCalendar.set(Calendar.HOUR_OF_DAY,selectedHour)
+        alarmCalendar.set(Calendar.MINUTE,selectedMin)
+
+        alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this@ReminderActivity,AlarmReceiver::class.java)
+        val pendingIntent=PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_IMMUTABLE)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,alarmCalendar.timeInMillis,pendingIntent)
 
     }
 
