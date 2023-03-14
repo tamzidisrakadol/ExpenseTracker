@@ -27,24 +27,23 @@ import java.util.*
 
 class ReminderActivity : AppCompatActivity() {
     private lateinit var binding: ActivityReminderBinding
-    private lateinit var db : ReminderDatabase
+    private lateinit var db: ReminderDatabase
     private var dataChange: Boolean = false
     private var timeChange: Boolean = false
     private lateinit var castToDate: Date
-    private lateinit var castToTime:Date
+    private lateinit var castToTime: Date
     private val CHANNEL_ID = "ChannelId"
     private val CHANNEL_NAME = "channelname"
     private val NOTIFICATIONID = 0
-    private lateinit var notification:Notification
-    private lateinit var  notificationManager: NotificationManagerCompat
-    private lateinit var alarmManager: AlarmManager
-    private var year:Int=0
-    private var month:Int=0
-    private var day:Int=0
-    private var selectedHour:Int=0
-    private var selectedMin:Int=0
-
-
+    private lateinit var notification: Notification
+    private lateinit var notificationManager: NotificationManagerCompat
+    private var alarmManager: AlarmManager? = null
+    private var pendingIntent: PendingIntent? = null
+    private var year: Int = 0
+    private var month: Int = 0
+    private var day: Int = 0
+    private var selectedHour: Int = 0
+    private var selectedMin: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,10 +51,11 @@ class ReminderActivity : AppCompatActivity() {
         binding = ActivityReminderBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        db=ReminderDatabase.getDatabase(this)
+        db = ReminderDatabase.getDatabase(this)
+        alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
 
         createNotification()
-        notification = NotificationCompat.Builder(this@ReminderActivity,CHANNEL_ID)
+        notification = NotificationCompat.Builder(this@ReminderActivity, CHANNEL_ID)
             .setContentTitle("Successful")
             .setContentText("Reminder has been saved")
             .setSmallIcon(R.drawable.data_save)
@@ -76,17 +76,13 @@ class ReminderActivity : AppCompatActivity() {
             setAlarm()
         }
 
-
-
-
     }
-
 
     private fun pickUpDate(view: View) {
         val myCalendar = Calendar.getInstance()
         year = myCalendar.get(Calendar.YEAR)
-         month = myCalendar.get(Calendar.MONTH)
-         day = myCalendar.get(Calendar.DAY_OF_MONTH)
+        month = myCalendar.get(Calendar.MONTH)
+        day = myCalendar.get(Calendar.DAY_OF_MONTH)
 
 
         val dpd = DatePickerDialog(
@@ -105,14 +101,15 @@ class ReminderActivity : AppCompatActivity() {
 
     private fun pickUpTime(view: View) {
         val myCalendar = Calendar.getInstance()
-         selectedHour = myCalendar.get(Calendar.HOUR)
-         selectedMin = myCalendar.get(Calendar.MINUTE)
+        selectedHour = myCalendar.get(Calendar.HOUR)
+        selectedMin = myCalendar.get(Calendar.MINUTE)
 
 
-        val mTimePicker = TimePickerDialog(this,
+        val mTimePicker = TimePickerDialog(
+            this,
             { view, hourOfDay, minute ->
                 val selectedTime = "$hourOfDay:$minute"
-                binding.selectTimeTV.text=selectedTime
+                binding.selectTimeTV.text = selectedTime
                 timeChange = true
                 val sdf = SimpleDateFormat("HH:mm", Locale.ENGLISH)
                 castToTime = sdf.parse(selectedTime) as Date
@@ -123,12 +120,13 @@ class ReminderActivity : AppCompatActivity() {
     }
 
 
-    private fun saveDataToRoom(){
-        val reminderData=binding.reminderDataET.text.toString()
+    private fun saveDataToRoom() {
+        val reminderData = binding.reminderDataET.text.toString()
         val reminderCategory = binding.reminderCategoryET.text.toString()
 
-        if (reminderData.isNotEmpty() && reminderCategory.isNotEmpty() && dataChange && timeChange){
-            val reminderDataModel = ReminderDataModel(0,reminderData,reminderCategory,castToDate,castToTime)
+        if (reminderData.isNotEmpty() && reminderCategory.isNotEmpty() && dataChange && timeChange) {
+            val reminderDataModel =
+                ReminderDataModel(0, reminderData, reminderCategory, castToDate, castToTime)
             lifecycleScope.launch {
                 db.reminderDao().insertReminderData(reminderDataModel)
                 val mProgressDialog = ProgressDialog(this@ReminderActivity)
@@ -146,43 +144,62 @@ class ReminderActivity : AppCompatActivity() {
                 ) {
                     return@launch
                 }
-                notificationManager.notify(NOTIFICATIONID,notification)
+                notificationManager.notify(NOTIFICATIONID, notification)
                 finish()
 
             }
-        }else{
-            Toast.makeText(this@ReminderActivity, "please fill all the requirements", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                this@ReminderActivity,
+                "please fill all the requirements",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
 
     //creating notification channel
-    private fun createNotification(){
-        if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-            val channel = NotificationChannel(CHANNEL_ID,CHANNEL_NAME,NotificationManager.IMPORTANCE_DEFAULT).apply {
+    private fun createNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply {
                 lightColor = Color.GREEN
                 enableLights(true)
             }
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
         }
-
     }
 
-    private fun setAlarm(){
-        val timeZone = TimeZone.getDefault()
-        val alarmCalendar = Calendar.getInstance(timeZone)
-        alarmCalendar.set(Calendar.YEAR,year)
-        alarmCalendar.set(Calendar.MONTH,month)
-        alarmCalendar.set(Calendar.DAY_OF_MONTH,day)
-        alarmCalendar.set(Calendar.HOUR_OF_DAY,selectedHour)
-        alarmCalendar.set(Calendar.MINUTE,selectedMin)
+    private fun setAlarm() {
+        var time = 0
+        var calendar = Calendar.getInstance()
+        calendar.set(Calendar.YEAR, year)
+        calendar.set(Calendar.MONTH, month)
+        calendar.set(Calendar.DAY_OF_MONTH, day)
+        calendar.set(Calendar.HOUR_OF_DAY, selectedHour)
+        calendar.set(Calendar.MINUTE, selectedMin)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        calendar.set(Calendar.AM_PM, if (selectedHour < 12) Calendar.AM else Calendar.PM)
 
-        alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this@ReminderActivity,AlarmReceiver::class.java)
-        val pendingIntent=PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_IMMUTABLE)
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,alarmCalendar.timeInMillis,pendingIntent)
+        val intent = Intent(this@ReminderActivity, AlarmReceiver::class.java)
+        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
+        time = (calendar.timeInMillis - System.currentTimeMillis()).toInt()
+        if (time < 0) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+            time = (calendar.timeInMillis - System.currentTimeMillis()).toInt()
+        }
+        alarmManager?.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            time.toLong(),
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
 
