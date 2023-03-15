@@ -38,10 +38,9 @@ class ReminderActivity : AppCompatActivity() {
     private lateinit var notification: Notification
     private lateinit var notificationManager: NotificationManagerCompat
     private var alarmManager: AlarmManager? = null
-    private var pendingIntent: PendingIntent? = null
-    private var year: Int = 0
-    private var month: Int = 0
-    private var day: Int = 0
+    private var selectedYearForAlarm: Int = 0
+    private var selectedMonthForAlarm: Int = 0
+    private var selectedDayForAlarm: Int = 0
     private var selectedHour: Int = 0
     private var selectedMin: Int = 0
 
@@ -52,7 +51,6 @@ class ReminderActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         db = ReminderDatabase.getDatabase(this)
-        alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
 
         createNotification()
         notification = NotificationCompat.Builder(this@ReminderActivity, CHANNEL_ID)
@@ -73,16 +71,16 @@ class ReminderActivity : AppCompatActivity() {
 
         binding.saveBtn.setOnClickListener {
             saveDataToRoom()
-            setAlarm()
+
         }
 
     }
 
     private fun pickUpDate(view: View) {
         val myCalendar = Calendar.getInstance()
-        year = myCalendar.get(Calendar.YEAR)
-        month = myCalendar.get(Calendar.MONTH)
-        day = myCalendar.get(Calendar.DAY_OF_MONTH)
+        val year = myCalendar.get(Calendar.YEAR)
+        val month = myCalendar.get(Calendar.MONTH)
+        val day = myCalendar.get(Calendar.DAY_OF_MONTH)
 
 
         val dpd = DatePickerDialog(
@@ -92,6 +90,9 @@ class ReminderActivity : AppCompatActivity() {
                 binding.selectDateTV.text = selectDate
                 val sdf = SimpleDateFormat("dd/MM/yyy", Locale.ENGLISH)
                 castToDate = sdf.parse(selectDate) as Date
+                selectedYearForAlarm = selectedYear
+                selectedMonthForAlarm = selectedMonth
+                selectedDayForAlarm = selectedDate
                 dataChange = true
             },
             year, month, day
@@ -114,7 +115,7 @@ class ReminderActivity : AppCompatActivity() {
                 val sdf = SimpleDateFormat("HH:mm", Locale.ENGLISH)
                 castToTime = sdf.parse(selectedTime) as Date
 
-            }, selectedHour, selectedMin, true
+            }, selectedHour, selectedMin, false
         )
         mTimePicker.show()
     }
@@ -145,6 +146,7 @@ class ReminderActivity : AppCompatActivity() {
                     return@launch
                 }
                 notificationManager.notify(NOTIFICATIONID, notification)
+                setAlarm(selectedYearForAlarm,selectedMonthForAlarm,selectedDayForAlarm,selectedHour,selectedMin)
                 finish()
 
             }
@@ -174,30 +176,30 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
-    private fun setAlarm() {
-        var time = 0
-        var calendar = Calendar.getInstance()
+    private fun setAlarm(year: Int, month: Int, dayOfMonth: Int, hourOfDay: Int, minute: Int) {
+        val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
         calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, day)
-        calendar.set(Calendar.HOUR_OF_DAY, selectedHour)
-        calendar.set(Calendar.MINUTE, selectedMin)
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        calendar.set(Calendar.MINUTE, minute)
         calendar.set(Calendar.SECOND, 0)
         calendar.set(Calendar.MILLISECOND, 0)
-        calendar.set(Calendar.AM_PM, if (selectedHour < 12) Calendar.AM else Calendar.PM)
+        calendar.set(Calendar.AM_PM, if (hourOfDay < 12) Calendar.AM else Calendar.PM)
 
-        val intent = Intent(this@ReminderActivity, AlarmReceiver::class.java)
-        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
 
-        time = (calendar.timeInMillis - System.currentTimeMillis()).toInt()
-        if (time < 0) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1)
-            time = (calendar.timeInMillis - System.currentTimeMillis()).toInt()
-        }
-        alarmManager?.setRepeating(
+        // Set the alarm to trigger at the specified time
+        alarmManager?.setExact(
             AlarmManager.RTC_WAKEUP,
-            time.toLong(),
-            AlarmManager.INTERVAL_DAY,
+            calendar.timeInMillis,
             pendingIntent
         )
     }
