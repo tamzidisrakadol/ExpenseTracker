@@ -1,5 +1,6 @@
 package com.example.expensetracker.daos
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -14,5 +15,5 @@ interface ReminderDataDao {
     suspend fun insertReminderData(reminderDataModel: ReminderDataModel)
 
     @Query("SELECT * FROM ReminderTable")
-    suspend fun getReminder():List<ReminderDataModel>
+    fun getReminder():LiveData<List<ReminderDataModel>>
 }

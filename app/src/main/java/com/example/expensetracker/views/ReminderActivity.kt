@@ -9,17 +9,25 @@ import android.graphics.Color
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.R
+import com.example.expensetracker.adapter.ReminderAdapter
 import com.example.expensetracker.databinding.ActivityReminderBinding
 import com.example.expensetracker.db.ReminderDatabase
 import com.example.expensetracker.model.ReminderDataModel
 import com.example.expensetracker.services.AlarmReceiver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -43,6 +51,10 @@ class ReminderActivity : AppCompatActivity() {
     private var selectedDayForAlarm: Int = 0
     private var selectedHour: Int = 0
     private var selectedMin: Int = 0
+    private var reminderDataModelList = mutableListOf<ReminderDataModel>()
+
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +72,12 @@ class ReminderActivity : AppCompatActivity() {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
+        binding.recyclerView.layoutManager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this@ReminderActivity,DividerItemDecoration.HORIZONTAL))
+        binding.recyclerView.addItemDecoration(DividerItemDecoration(this@ReminderActivity,DividerItemDecoration.VERTICAL))
+
+        showReminderList()
+
 
         binding.selectDateTV.setOnClickListener {
             pickUpDate(it)
@@ -75,7 +93,20 @@ class ReminderActivity : AppCompatActivity() {
         }
 
     }
+    private fun showReminderList(){
+        CoroutineScope(Dispatchers.Main).launch {
+            db.reminderDao().getReminder().observe(this@ReminderActivity, androidx.lifecycle.Observer {
+                Log.d("tag",it.toString())
+                reminderDataModelList.addAll(it)
+                val adapter = ReminderAdapter(reminderDataModelList)
+                binding.recyclerView.adapter=adapter
 
+                adapter.notifyDataSetChanged()
+            })
+        }
+    }
+
+    //setting Date
     private fun pickUpDate(view: View) {
         val myCalendar = Calendar.getInstance()
         val year = myCalendar.get(Calendar.YEAR)
@@ -100,6 +131,7 @@ class ReminderActivity : AppCompatActivity() {
         dpd.show()
     }
 
+    //setting time
     private fun pickUpTime(view: View) {
         val myCalendar = Calendar.getInstance()
         selectedHour = myCalendar.get(Calendar.HOUR)
@@ -121,6 +153,7 @@ class ReminderActivity : AppCompatActivity() {
     }
 
 
+    //saving data to Room
     private fun saveDataToRoom() {
         val reminderData = binding.reminderDataET.text.toString()
         val reminderCategory = binding.reminderCategoryET.text.toString()
@@ -176,6 +209,8 @@ class ReminderActivity : AppCompatActivity() {
         }
     }
 
+
+    //setting Alarm
     private fun setAlarm(year: Int, month: Int, dayOfMonth: Int, hourOfDay: Int, minute: Int) {
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, year)
