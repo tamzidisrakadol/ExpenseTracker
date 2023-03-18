@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.R
 import com.example.expensetracker.adapter.ReminderAdapter
+import com.example.expensetracker.adapter.ReminderItemClickListener
 import com.example.expensetracker.databinding.ActivityReminderBinding
 import com.example.expensetracker.db.ReminderDatabase
 import com.example.expensetracker.model.ReminderDataModel
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ReminderActivity : AppCompatActivity() {
+class ReminderActivity : AppCompatActivity(), ReminderItemClickListener {
     private lateinit var binding: ActivityReminderBinding
     private lateinit var db: ReminderDatabase
     private var dataChange: Boolean = false
@@ -54,9 +55,6 @@ class ReminderActivity : AppCompatActivity() {
     private var reminderDataModelList = mutableListOf<ReminderDataModel>()
 
 
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityReminderBinding.inflate(layoutInflater)
@@ -75,7 +73,7 @@ class ReminderActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this@ReminderActivity,DividerItemDecoration.HORIZONTAL))
         binding.recyclerView.addItemDecoration(DividerItemDecoration(this@ReminderActivity,DividerItemDecoration.VERTICAL))
-
+        reminderDataModelList.clear()
         showReminderList()
 
 
@@ -94,17 +92,17 @@ class ReminderActivity : AppCompatActivity() {
 
     }
     private fun showReminderList(){
-        CoroutineScope(Dispatchers.Main).launch {
-            db.reminderDao().getReminder().observe(this@ReminderActivity, androidx.lifecycle.Observer {
-                Log.d("tag",it.toString())
-                reminderDataModelList.addAll(it)
-                val adapter = ReminderAdapter(reminderDataModelList)
-                binding.recyclerView.adapter=adapter
-
-                adapter.notifyDataSetChanged()
-            })
-        }
+        db.reminderDao().getReminder().observe(this, androidx.lifecycle.Observer {
+            reminderDataModelList.clear()
+            reminderDataModelList.addAll(it)
+            val adapter = ReminderAdapter(reminderDataModelList,this)
+            Log.d("tag","$reminderDataModelList")
+            Log.d("tag","${reminderDataModelList.size}")
+            binding.recyclerView.adapter = adapter
+            adapter.notifyDataSetChanged()
+        })
     }
+
 
     //setting Date
     private fun pickUpDate(view: View) {
@@ -237,6 +235,10 @@ class ReminderActivity : AppCompatActivity() {
             calendar.timeInMillis,
             pendingIntent
         )
+    }
+
+    override fun deleteItem(reminderDataModel: ReminderDataModel) {
+
     }
 
 

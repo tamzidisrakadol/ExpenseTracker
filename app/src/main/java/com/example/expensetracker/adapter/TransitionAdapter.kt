@@ -31,7 +31,6 @@ class TransitionAdapter(val tlist:List<Transition>,val context: Context,val onIt
         holder.itemLayoutBinding.noteTV.text = transitionModel.note
         holder.itemLayoutBinding.typeTV.text = transitionModel.type
 
-
         holder.itemLayoutBinding.deleteImgBtn.setOnClickListener {
             onItemClickListener.onItemClick(transitionModel,position)
         }

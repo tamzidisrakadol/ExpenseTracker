@@ -2,15 +2,17 @@ package com.example.expensetracker.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.databinding.ReminderItemLayoutBinding
 import com.example.expensetracker.model.ReminderDataModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>):RecyclerView.Adapter<ReminderAdapter.ViewHolder>() {
+class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>,val onReminderItemClickListener: ReminderItemClickListener):RecyclerView.Adapter<ReminderAdapter.ViewHolder>() {
 
     class ViewHolder(private val reminderItemLayoutBinding: ReminderItemLayoutBinding):RecyclerView.ViewHolder(reminderItemLayoutBinding.root){
+        private lateinit var onItemClickListener: ReminderItemClickListener
          fun bind(reminderDataModel: ReminderDataModel){
 
              //converting date
@@ -23,12 +25,13 @@ class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>)
              val sdfTime=SimpleDateFormat("HH:mm", Locale.ENGLISH)
              val formatedTime = sdfTime.format(time)
 
-
-
              reminderItemLayoutBinding.reminderDataTv.text = reminderDataModel.reminderData
              reminderItemLayoutBinding.reminderCategoryTV.text = reminderDataModel.reminderCategory
              reminderItemLayoutBinding.reminderTimeTV.text= formatedTime
              reminderItemLayoutBinding.reminderSelectedDateTV.text=formateDate
+             reminderItemLayoutBinding.reminderDeleteBtn.setOnClickListener {
+              onItemClickListener.deleteItem(reminderDataModel)
+             }
         }
     }
 
@@ -45,4 +48,8 @@ class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>)
         val reminderDataModel = reminderDataModelList[position]
         holder.bind(reminderDataModel)
     }
+}
+
+interface ReminderItemClickListener{
+    fun deleteItem(reminderDataModel: ReminderDataModel)
 }

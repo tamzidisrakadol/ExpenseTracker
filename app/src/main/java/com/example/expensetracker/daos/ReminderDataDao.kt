@@ -1,10 +1,7 @@
 package com.example.expensetracker.daos
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.expensetracker.model.ReminderDataModel
 
 
@@ -16,4 +13,7 @@ interface ReminderDataDao {
 
     @Query("SELECT * FROM ReminderTable")
     fun getReminder():LiveData<List<ReminderDataModel>>
+
+    @Delete
+    fun deleteItem(reminderDataModel: ReminderDataModel)
 }
