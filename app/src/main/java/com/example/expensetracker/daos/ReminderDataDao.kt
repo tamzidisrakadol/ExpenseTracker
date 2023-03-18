@@ -15,5 +15,5 @@ interface ReminderDataDao {
     fun getReminder():LiveData<List<ReminderDataModel>>
 
     @Delete
-    fun deleteItem(reminderDataModel: ReminderDataModel)
+    suspend fun deleteItem(reminderDataModel: ReminderDataModel)
 }

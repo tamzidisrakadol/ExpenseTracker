@@ -27,10 +27,7 @@ import com.example.expensetracker.databinding.ActivityReminderBinding
 import com.example.expensetracker.db.ReminderDatabase
 import com.example.expensetracker.model.ReminderDataModel
 import com.example.expensetracker.services.AlarmReceiver
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -237,8 +234,14 @@ class ReminderActivity : AppCompatActivity(), ReminderItemClickListener {
         )
     }
 
+    //delete item from the list
     override fun deleteItem(reminderDataModel: ReminderDataModel) {
-
+        CoroutineScope(Dispatchers.Main).launch {
+            db.reminderDao().deleteItem(reminderDataModel)
+            withContext(Dispatchers.Main){
+                showReminderList()
+            }
+        }
     }
 
 

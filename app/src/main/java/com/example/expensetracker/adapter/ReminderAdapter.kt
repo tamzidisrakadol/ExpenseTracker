@@ -11,8 +11,8 @@ import java.util.*
 
 class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>,val onReminderItemClickListener: ReminderItemClickListener):RecyclerView.Adapter<ReminderAdapter.ViewHolder>() {
 
-    class ViewHolder(private val reminderItemLayoutBinding: ReminderItemLayoutBinding):RecyclerView.ViewHolder(reminderItemLayoutBinding.root){
-        private lateinit var onItemClickListener: ReminderItemClickListener
+    class ViewHolder( val reminderItemLayoutBinding: ReminderItemLayoutBinding):RecyclerView.ViewHolder(reminderItemLayoutBinding.root){
+
          fun bind(reminderDataModel: ReminderDataModel){
 
              //converting date
@@ -29,9 +29,7 @@ class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>,
              reminderItemLayoutBinding.reminderCategoryTV.text = reminderDataModel.reminderCategory
              reminderItemLayoutBinding.reminderTimeTV.text= formatedTime
              reminderItemLayoutBinding.reminderSelectedDateTV.text=formateDate
-             reminderItemLayoutBinding.reminderDeleteBtn.setOnClickListener {
-              onItemClickListener.deleteItem(reminderDataModel)
-             }
+
         }
     }
 
@@ -47,6 +45,9 @@ class ReminderAdapter(private val reminderDataModelList:List<ReminderDataModel>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val reminderDataModel = reminderDataModelList[position]
         holder.bind(reminderDataModel)
+        holder.reminderItemLayoutBinding.reminderDeleteBtn.setOnClickListener {
+            onReminderItemClickListener.deleteItem(reminderDataModel)
+        }
     }
 }
 
