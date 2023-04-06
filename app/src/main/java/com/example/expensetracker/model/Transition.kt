@@ -1,7 +1,5 @@
 package com.example.expensetracker.model
 
-
-
 data class Transition(
     val uid:String="",
     var expenseId:String = "",

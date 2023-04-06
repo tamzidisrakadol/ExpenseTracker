@@ -46,7 +46,7 @@
                     android:layout_marginStart="40dp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/arvo"
-                    android:text="TK 100000"
+                    android:text="TK 0"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_15sdp"
                     app:layout_constraintStart_toStartOf="parent"
