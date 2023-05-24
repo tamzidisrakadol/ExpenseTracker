@@ -10,9 +10,6 @@ import java.util.*
 
 class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerView.Adapter<TestDataAdapter.ViewHolder>() {
 
-
-
-
     class ViewHolder(private var testItemLayoutBinding: TestitemlayoutBinding):RecyclerView.ViewHolder(testItemLayoutBinding.root){
 
         fun bind(testDataModel: TestDataModel){
@@ -41,7 +38,7 @@ class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerVi
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        var testDataModel = testDataList[position]
+        val testDataModel = testDataList[position]
         holder.bind(testDataModel)
 
     }

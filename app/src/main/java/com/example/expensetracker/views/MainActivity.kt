@@ -50,6 +50,9 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             startActivity(intent)
 
         }
+        binding.showListTV.setOnClickListener {
+            startActivity(Intent(this@MainActivity, ShowTransactionListActivity::class.java))
+        }
 
         //sign out btn
         binding.signOutBtn.setOnClickListener {

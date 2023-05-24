@@ -33,7 +33,7 @@ class FetchDataByDateWise : AppCompatActivity() {
     private lateinit var testDataAdapter: TestDataAdapter
     private lateinit var newTestDataAdapter: NewTestDataAdapter
     private var newTestDataModelList = mutableListOf<TestDataModel>()
-    private var nameOFMonth = mutableListOf("January","February","March","April","May","June")
+    private var nameOFMonth = mutableListOf("January", "February", "March", "April", "May", "June")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +45,15 @@ class FetchDataByDateWise : AppCompatActivity() {
         binding.fetchDataRecyclerView.layoutManager =
             LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
-        newTestDataAdapter=NewTestDataAdapter(newTestDataModelList)
-        binding.newRecyclerView.layoutManager=LinearLayoutManager(this,RecyclerView.HORIZONTAL,false)
-        val arrayAdapter = ArrayAdapter<String>(this,
-            R.layout.simple_spinner_dropdown_item,nameOFMonth)
-        binding.spinner.adapter= arrayAdapter
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+        newTestDataAdapter = NewTestDataAdapter(newTestDataModelList)
+        binding.newRecyclerView.layoutManager =
+            LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        val arrayAdapter = ArrayAdapter<String>(
+            this,
+            R.layout.simple_spinner_dropdown_item, nameOFMonth
+        )
+        binding.spinner.adapter = arrayAdapter
+        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 Toast.makeText(this@FetchDataByDateWise, nameOFMonth[p2], Toast.LENGTH_SHORT).show()
                 val selectedMonth = nameOFMonth[p2]
@@ -66,14 +69,15 @@ class FetchDataByDateWise : AppCompatActivity() {
                             val testData = document.toObject(TestDataModel::class.java)
                             newTestDataModelList.add(testData)
                             binding.newRecyclerView.adapter = newTestDataAdapter
-
-                            if (newTestDataAdapter.itemCount==0){
-                                binding.newRecyclerView.visibility=View.GONE
-                                binding.noDataTV.text="No expense is saved for this month"
-                            }else{
-                                binding.newRecyclerView.visibility = View.VISIBLE
-                                binding.noDataTV.visibility = View.GONE
-                            }
+                            binding.newRecyclerView.visibility = View.VISIBLE
+                            binding.fetchDataRecyclerView.visibility = View.GONE
+//                            if (newTestDataAdapter.itemCount == 0) {
+//                                binding.newRecyclerView.visibility = View.GONE
+//                                binding.noDataTV.text = "No expense is saved for this month"
+//                            } else {
+//                                binding.newRecyclerView.visibility = View.VISIBLE
+//                                binding.noDataTV.visibility = View.GONE
+//                            }
                             Log.d("tag", "All Data : $testDataModelList")
                         }
                         newTestDataAdapter.notifyDataSetChanged()
@@ -83,6 +87,7 @@ class FetchDataByDateWise : AppCompatActivity() {
                     }
 
             }
+
             override fun onNothingSelected(p0: AdapterView<*>?) {
 
             }
@@ -96,7 +101,7 @@ class FetchDataByDateWise : AppCompatActivity() {
         }
 
         binding.reminderBtn.setOnClickListener {
-            val intent = Intent(this@FetchDataByDateWise,ReminderActivity::class.java)
+            val intent = Intent(this@FetchDataByDateWise, ReminderActivity::class.java)
             startActivity(intent)
         }
 
@@ -156,7 +161,7 @@ class FetchDataByDateWise : AppCompatActivity() {
 
 
         if (nData.isNotEmpty() && categoryData.isNotEmpty() && isDateChanged) {
-            testDocument(userId, dataId, nData, categoryData, months, castToDate)
+            testDocument(userId, dataId, nData, categoryData, months!!, castToDate)
 
             Toast.makeText(this@FetchDataByDateWise, "successfully uploaded", Toast.LENGTH_SHORT)
                 .show()
@@ -177,27 +182,19 @@ class FetchDataByDateWise : AppCompatActivity() {
     }
 
 
-    private fun testDocument(
-        userId: String,
-        id: String,
-        nData: String,
-        nCategory: String,
-        month: String,
-        date: Date
-    ) {
+    private fun testDocument(userId: String, id: String, nData: String, nCategory: String, month: String, date: Date) {
         val db = FirebaseFirestore.getInstance()
         val collection = db.collection("testData")
         val testDataModel = TestDataModel(userId, id, nCategory, nData, month, Timestamp(date))
-
         lifecycleScope.launch {
             collection.add(testDataModel)
         }
-
     }
 
     private fun getData() {
         val months = Calendar.getInstance()
-            .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+            .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())  // for retrieving only the selected month
+
         FirebaseFirestore.getInstance()
             .collection("testData")
             .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
