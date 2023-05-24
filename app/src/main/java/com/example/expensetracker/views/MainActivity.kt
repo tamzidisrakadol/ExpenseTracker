@@ -1,6 +1,6 @@
 package com.example.expensetracker.views
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         //reset btn
         binding.resetBtn.setOnClickListener {
             lifecycleScope.launch {
-                expenseDao.deleteAllData()
+                expenseDao.deleteAllTransaction()
                 withContext(Dispatchers.Main){
                     delay(2000L)
                     setUpFireStore()
@@ -79,13 +79,13 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     }
 
-
     override fun onResume() {
         super.onResume()
         income = 0L
         expense = 0L
         setUpFireStore()
     }
+
 
 
     private fun setUpFireStore() {
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     transitionModelList.add(transitions)
                 }
                 binding.recyclerView.adapter = adapter
-                var balance = expenseDao.displayRemainBalance(transitionModelList)
+                val balance = expenseDao.displayRemainBalance(transitionModelList)
                 if (balance > 0) {
                     binding.remainBalanceTV.text = "TK $balance "
                 } else {
@@ -163,6 +163,8 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             if (it.exists()){
                 val user = it.toObject(User::class.java)
                 val imgUrl = user!!.imgUrl
+                val userName = user.displayName
+                Log.d("name","$userName")
 
                 Glide
                     .with(this)
