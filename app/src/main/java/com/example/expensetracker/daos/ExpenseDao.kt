@@ -1,7 +1,7 @@
 package com.example.expensetracker.daos
 
 import android.util.Log
-import com.example.expensetracker.model.Transition
+import com.example.expensetracker.model.TransactionModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,9 +15,9 @@ class ExpenseDao {
     private val expenseCollection = db.collection("expenses")
 
 
-    fun addExpense(transition: Transition) {
+    fun addExpense(transactionModel: TransactionModel) {
         GlobalScope.launch {
-            expenseCollection.add(transition)
+            expenseCollection.add(transactionModel)
         }
     }
 
@@ -29,10 +29,10 @@ class ExpenseDao {
     }
 
 
-    fun displayRemainBalance(transition: List<Transition>): Long {
+    fun displayRemainBalance(transactionModel: List<TransactionModel>): Long {
         var income = 0L
         var expense = 0L
-        transition.forEach {
+        transactionModel.forEach {
             if (it.type == "income") {
                 income += it.amount
             } else {

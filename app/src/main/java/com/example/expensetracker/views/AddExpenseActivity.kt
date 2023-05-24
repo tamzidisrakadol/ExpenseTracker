@@ -1,18 +1,13 @@
 package com.example.expensetracker.views
 
-import android.app.DatePickerDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.DatePicker
 import android.widget.Toast
 import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityAddExpenseBinding
-import com.example.expensetracker.model.Transition
+import com.example.expensetracker.model.TransactionModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
 import java.util.*
 
 class AddExpenseActivity : AppCompatActivity() {
@@ -52,9 +47,9 @@ class AddExpenseActivity : AppCompatActivity() {
 
 
         if (amount.isNotEmpty() && note.isNotEmpty() && category.isNotEmpty()){
-           val transition = Transition(userID,expenseId,amount.toLong(),note,category,type)
+           val transactionModel = TransactionModel(userID,expenseId,amount.toLong(),note,category,type)
             val expenseDao = ExpenseDao()
-            expenseDao.addExpense(transition)
+            expenseDao.addExpense(transactionModel)
             Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show()
             val intent = Intent(this@AddExpenseActivity,MainActivity::class.java)
             startActivity(intent)

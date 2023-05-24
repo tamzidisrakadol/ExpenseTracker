@@ -19,5 +19,14 @@
         <item>December</item>
     </string-array>
 
+    <string-array name="category_section">
+        <item>Food</item>
+        <item>Transportation</item>
+        <item>Main income source</item>
+        <item>Utility</item>
+        <item>Shopping</item>
+        <item>Other</item>
+        <item>Bank Debt</item>
+    </string-array>
 
 </resources>

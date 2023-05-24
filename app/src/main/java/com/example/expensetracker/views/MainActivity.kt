@@ -1,6 +1,5 @@
 package com.example.expensetracker.views
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,7 +14,7 @@ import com.example.expensetracker.adapter.OnItemClickListener
 import com.example.expensetracker.adapter.TransitionAdapter
 import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityMainBinding
-import com.example.expensetracker.model.Transition
+import com.example.expensetracker.model.TransactionModel
 import com.example.expensetracker.model.User
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -29,7 +28,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(), OnItemClickListener {
     private lateinit var binding: ActivityMainBinding
-    private var transitionModelList = mutableListOf<Transition>()
+    private var transactionModelModelList = mutableListOf<TransactionModel>()
     private lateinit var adapter: TransitionAdapter
 
     private val expenseDao = ExpenseDao()
@@ -42,7 +41,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
         loadProfilePic()
 
-        adapter = TransitionAdapter(transitionModelList, this, this)
+        adapter = TransitionAdapter(transactionModelModelList, this, this)
 
         //add transitionBtn
         binding.transitionBtn.setOnClickListener {
@@ -73,7 +72,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 withContext(Dispatchers.Main){
                     delay(2000L)
                     setUpFireStore()
-                    transitionModelList.clear()
+                    transactionModelModelList.clear()
                     adapter.notifyDataSetChanged()
                 }
 
@@ -94,21 +93,21 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     private fun setUpFireStore() {
         expenseDao.getExpenseList()
             .addOnSuccessListener {
-                transitionModelList.clear()
+                transactionModelModelList.clear()
                 income = 0L
                 expense = 0L
                 for (document in it) {
-                    val transitions = document.toObject(Transition::class.java)
+                    val transitions = document.toObject(TransactionModel::class.java)
                     transitions.expenseId = document.id
                     if (transitions.type=="income"){
                         income += transitions.amount
                     }else{
                         expense += transitions.amount
                     }
-                    transitionModelList.add(transitions)
+                    transactionModelModelList.add(transitions)
                 }
                 binding.recyclerView.adapter = adapter
-                val balance = expenseDao.displayRemainBalance(transitionModelList)
+                val balance = expenseDao.displayRemainBalance(transactionModelModelList)
                 if (balance > 0) {
                     binding.remainBalanceTV.text = "TK $balance "
                 } else {
@@ -120,13 +119,13 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     }
 
-    override fun onItemClick(transition: Transition, pos: Int) {
+    override fun onItemClick(transactionModel: TransactionModel, pos: Int) {
         FirebaseFirestore.getInstance()
             .collection("expenses")
-            .document(transition.expenseId)
+            .document(transactionModel.expenseId)
             .delete()
             .addOnSuccessListener {
-                transitionModelList.removeAt(pos)
+                transactionModelModelList.removeAt(pos)
                 adapter.notifyItemRemoved(pos)
                 setUpFireStore()
                 Toast.makeText(this, "deleted", Toast.LENGTH_SHORT).show()

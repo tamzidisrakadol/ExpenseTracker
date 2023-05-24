@@ -1,6 +1,6 @@
 package com.example.expensetracker.model
 
-data class Transition(
+data class TransactionModel(
     val uid:String="",
     var expenseId:String = "",
     val amount:Long = 0L,
