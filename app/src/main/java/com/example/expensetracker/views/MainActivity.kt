@@ -26,10 +26,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainActivity : AppCompatActivity(), OnItemClickListener {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var transactionModelModelList = mutableListOf<TransactionModel>()
-    private lateinit var adapter: TransitionAdapter
+
 
     private val expenseDao = ExpenseDao()
     private var income: Long = 0L
@@ -41,8 +41,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
 
         loadProfilePic()
 
-        adapter = TransitionAdapter(transactionModelModelList, this, this)
-
         //add transitionBtn
         binding.transitionBtn.setOnClickListener {
             val intent = Intent(this@MainActivity, AddExpenseActivity::class.java)
@@ -53,6 +51,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             startActivity(Intent(this@MainActivity, ShowTransactionListActivity::class.java))
         }
 
+
         //sign out btn
         binding.signOutBtn.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
@@ -61,8 +60,11 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             finish()
         }
 
+        binding.imgView.setOnClickListener {
+            startActivity(Intent(this@MainActivity,ProfileActivity::class.java))
+        }
+
         setUpFireStore()
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
 
 
         //reset btn
@@ -73,7 +75,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     delay(2000L)
                     setUpFireStore()
                     transactionModelModelList.clear()
-                    adapter.notifyDataSetChanged()
                 }
 
             }
@@ -87,7 +88,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         expense = 0L
         setUpFireStore()
     }
-
 
 
     private fun setUpFireStore() {
@@ -106,32 +106,14 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                     }
                     transactionModelModelList.add(transitions)
                 }
-                binding.recyclerView.adapter = adapter
                 val balance = expenseDao.displayRemainBalance(transactionModelModelList)
                 if (balance > 0) {
                     binding.remainBalanceTV.text = "TK $balance "
                 } else {
                     binding.remainBalanceTV.text = "TK 0"
                 }
-                adapter.notifyDataSetChanged()
+
                 setupPieChart()
-            }
-
-    }
-
-    override fun onItemClick(transactionModel: TransactionModel, pos: Int) {
-        FirebaseFirestore.getInstance()
-            .collection("expenses")
-            .document(transactionModel.expenseId)
-            .delete()
-            .addOnSuccessListener {
-                transactionModelModelList.removeAt(pos)
-                adapter.notifyItemRemoved(pos)
-                setUpFireStore()
-                Toast.makeText(this, "deleted", Toast.LENGTH_SHORT).show()
-                Log.d("delete", transactionModel.expenseId)
-            }.addOnFailureListener {
-                Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
             }
 
     }
