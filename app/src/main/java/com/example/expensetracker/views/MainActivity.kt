@@ -129,6 +129,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 adapter.notifyItemRemoved(pos)
                 setUpFireStore()
                 Toast.makeText(this, "deleted", Toast.LENGTH_SHORT).show()
+                Log.d("delete", transactionModel.expenseId)
             }.addOnFailureListener {
                 Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
             }

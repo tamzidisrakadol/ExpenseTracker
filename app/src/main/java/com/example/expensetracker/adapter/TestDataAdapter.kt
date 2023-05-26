@@ -40,8 +40,6 @@ class TestDataAdapter(private val testDataList:List<TestDataModel>) : RecyclerVi
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val testDataModel = testDataList[position]
         holder.bind(testDataModel)
-
     }
-
 
 }

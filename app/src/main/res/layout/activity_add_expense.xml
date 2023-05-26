@@ -118,13 +118,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
-            <AutoCompleteTextView
+            <TextView
                 android:id="@+id/dateSelectTV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingLeft="@dimen/_10sdp"
-                android:inputType="none"
-                android:hint="Select Date"/>
+                android:hint="Select Date"
+                android:gravity="center|left"
+                android:paddingLeft="@dimen/_15sdp"
+                android:textSize="@dimen/_13sdp"/>
 
 
 

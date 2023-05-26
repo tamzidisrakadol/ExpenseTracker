@@ -6,9 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.expensetracker.databinding.ItemLayoutBinding
 import com.example.expensetracker.model.TransactionModel
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
-class TransitionAdapter(val tlist:List<TransactionModel>, val context: Context, val onItemClickListener: OnItemClickListener):RecyclerView.Adapter<TransitionAdapter.ViewHolder>(){
+class TransitionAdapter(private val tlist:List<TransactionModel>, val context: Context, val onItemClickListener: OnItemClickListener):RecyclerView.Adapter<TransitionAdapter.ViewHolder>(){
 
     class ViewHolder(val itemLayoutBinding: ItemLayoutBinding):RecyclerView.ViewHolder(itemLayoutBinding.root){
 
@@ -25,11 +27,15 @@ class TransitionAdapter(val tlist:List<TransactionModel>, val context: Context, 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val transitionModel = tlist[position]
+        val date = transitionModel.date.toDate()
+        val sdf = SimpleDateFormat("MMM dd", Locale.ENGLISH)
+        val formattedDate = sdf.format(date)
 
         holder.itemLayoutBinding.amountTV.text = "TK "+transitionModel.amount.toString()
         holder.itemLayoutBinding.categoryTV.text = transitionModel.category
         holder.itemLayoutBinding.noteTV.text = transitionModel.note
         holder.itemLayoutBinding.typeTV.text = transitionModel.type
+        holder.itemLayoutBinding.transactionDate.text = formattedDate
 
         holder.itemLayoutBinding.deleteImgBtn.setOnClickListener {
             onItemClickListener.onItemClick(transitionModel,position)
