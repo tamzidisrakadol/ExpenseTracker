@@ -22,6 +22,8 @@ class AddExpenseActivity : AppCompatActivity() {
     private var isCategorySelected: Boolean = false
     private lateinit var castToDate: Date
     private var selectedCategory: String = ""
+    private var selectMonthFromCalendar:String =""
+    private val expenseDao = ExpenseDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +35,10 @@ class AddExpenseActivity : AppCompatActivity() {
         }
         binding.dateSelectTV.setOnClickListener {
             pickUpDate(it)
+        }
+
+        binding.button.setOnClickListener {
+            startActivity(Intent(this@AddExpenseActivity, FetchDataByDateWise::class.java))
         }
 
         //selectCategory
@@ -52,10 +58,10 @@ class AddExpenseActivity : AppCompatActivity() {
         val expenseId = UUID.randomUUID().toString()
         val amount = binding.amountEditText.text.toString()
         val note = binding.noteEditText.text.toString()
-        val monthName = Calendar.getInstance()
+        val currentMonthName = Calendar.getInstance()
             .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
 
-        var type:String = ""
+        var type: String = ""
 
         val isIncomeRadioChecked: Boolean = binding.incomeRadioBtn.isChecked
         if (isIncomeRadioChecked) {
@@ -66,23 +72,41 @@ class AddExpenseActivity : AppCompatActivity() {
 
 
         if (amount.isNotEmpty() && note.isNotEmpty() && isCategorySelected && isDateChanged) {
-            val transactionModel = TransactionModel(
-                userID,
-                expenseId,
-                amount.toLong(),
-                note,
-                selectedCategory,
-                type,
-                monthName!!,
-                Timestamp(castToDate)
-            )
-            val expenseDao = ExpenseDao()
-            expenseDao.addExpense(transactionModel)
-            Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this@AddExpenseActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            if (selectMonthFromCalendar==currentMonthName){
+                val transactionModel = TransactionModel(
+                    userID,
+                    expenseId,
+                    amount.toLong(),
+                    note,
+                    selectedCategory,
+                    type,
+                    currentMonthName,
+                    Timestamp(castToDate)
+                )
 
+                expenseDao.addExpense(transactionModel)
+                Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@AddExpenseActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }else{
+                val transactionModel = TransactionModel(
+                    userID,
+                    expenseId,
+                    amount.toLong(),
+                    note,
+                    selectedCategory,
+                    type,
+                    selectMonthFromCalendar,
+                    Timestamp(castToDate)
+                )
+
+                expenseDao.addExpense(transactionModel)
+                Toast.makeText(this, "saved", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@AddExpenseActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         } else {
             Toast.makeText(this, "Please fill all the requirements", Toast.LENGTH_SHORT).show()
             return
@@ -100,10 +124,14 @@ class AddExpenseActivity : AppCompatActivity() {
             this,
             DatePickerDialog.OnDateSetListener { view, selectedYear, selectedMonth, selectedDate ->
                 val selectDate = "$selectedDate/${selectedMonth + 1}/$selectedYear"
-                binding.dateSelectTV.text = selectDate
                 val sdf = SimpleDateFormat("dd/MM/yyy", Locale.ENGLISH)
                 castToDate = sdf.parse(selectDate) as Date
+                binding.dateSelectTV.text = selectDate
                 isDateChanged = true
+                val selectedCalendar = Calendar.getInstance().apply {
+                    set(selectedYear, selectedMonth, selectedDate)
+                }
+                selectMonthFromCalendar = SimpleDateFormat("MMMM", Locale.ENGLISH).format(selectedCalendar.time)
             },
             year, month, day
         )

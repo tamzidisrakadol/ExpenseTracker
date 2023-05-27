@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class TransitionAdapter(private val tlist:List<TransactionModel>, val context: Context, val onItemClickListener: OnItemClickListener):RecyclerView.Adapter<TransitionAdapter.ViewHolder>(){
+class TransitionAdapter(private val tlist:List<TransactionModel>, private val onItemClickListener: OnItemClickListener):RecyclerView.Adapter<TransitionAdapter.ViewHolder>(){
 
     class ViewHolder(val itemLayoutBinding: ItemLayoutBinding):RecyclerView.ViewHolder(itemLayoutBinding.root){
 
