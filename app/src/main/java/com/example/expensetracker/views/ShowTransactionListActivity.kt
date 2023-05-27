@@ -1,5 +1,6 @@
 package com.example.expensetracker.views
 
+import android.app.ProgressDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -50,34 +51,34 @@ class ShowTransactionListActivity : AppCompatActivity() {
     }
 
 
-    private fun getTransactionList(monthName:String) {
-            FirebaseFirestore.getInstance()
-                .collection("expenses")
-                .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
-                .whereEqualTo("monthName", monthName)
-                .get()
-                .addOnSuccessListener {
-                    transactionList.clear()
-                    for (document in it) {
-                        val transactionModelData = document.toObject(TransactionModel::class.java)
-                        transactionModelData.expenseId = document.id
-                        transactionList.add(transactionModelData)
-                        adapter = TransitionAdapter(transactionList, object : OnItemClickListener {
-                                override fun onItemClick(
-                                    transactionModel: TransactionModel,
-                                    pos: Int
-                                ) {
-                                    deleteItem(transactionModel, pos)
-                                }
-                            })
-                        binding.transactionList.adapter = adapter
-                    }
-                    adapter.notifyDataSetChanged()
-
-                }.addOnFailureListener {
-                    Log.d("tag", "exception $it")
-                }
-    }
+//    private fun getTransactionList(monthName:String) {
+//            FirebaseFirestore.getInstance()
+//                .collection("expenses")
+//                .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
+//                .whereEqualTo("monthName", monthName)
+//                .get()
+//                .addOnSuccessListener {
+//                    transactionList.clear()
+//                    for (document in it) {
+//                        val transactionModelData = document.toObject(TransactionModel::class.java)
+//                        transactionModelData.expenseId = document.id
+//                        transactionList.add(transactionModelData)
+//                        adapter = TransitionAdapter(transactionList, object : OnItemClickListener {
+//                                override fun onItemClick(
+//                                    transactionModel: TransactionModel,
+//                                    pos: Int
+//                                ) {
+//                                    deleteItem(transactionModel, pos)
+//                                }
+//                            })
+//                        binding.transactionList.adapter = adapter
+//                    }
+//                    adapter.notifyDataSetChanged()
+//
+//                }.addOnFailureListener {
+//                    Log.d("tag", "exception $it")
+//                }
+//    }
 
     //deleteItem from list
     private fun deleteItem(transactionModel: TransactionModel, pos: Int){
@@ -96,44 +97,49 @@ class ShowTransactionListActivity : AppCompatActivity() {
             }
     }
 
-//    private fun getTransactionList(monthName: String) {
-//        CoroutineScope(Dispatchers.IO).launch {
-//            try {
-//                val querySnapshot = FirebaseFirestore.getInstance()
-//                    .collection("expenses")
-//                    .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
-//                    .whereEqualTo("monthName", monthName)
-//                    .get()
-//                    .await()
-//
-//                val updatedTransactionList = mutableListOf<TransactionModel>()
-//                for (document in querySnapshot) {
-//                    val transactionModelData = document.toObject(TransactionModel::class.java)
-//                    transactionModelData.expenseId = document.id
-//                    updatedTransactionList.add(transactionModelData)
-//                }
-//
-//                withContext(Dispatchers.Main) {
-//                    transactionList.clear()
-//                    transactionList.addAll(updatedTransactionList)
-//                    adapter =
-//                        TransitionAdapter(transactionList,object : OnItemClickListener {
-//                            override fun onItemClick(
-//                                transactionModel: TransactionModel,
-//                                pos: Int
-//                            ) {
-//                                deleteItem(transactionModel, pos)
-//                            }
-//                        })
-//                    binding.transactionList.adapter = adapter
-//                    adapter.notifyDataSetChanged()
-//                }
-//            } catch (e: Exception) {
-//                withContext(Dispatchers.Main) {
-//                    Log.d("tag", "exception $e")
-//                }
-//            }
-//        }
-//    }
+    private fun getTransactionList(monthName: String) {
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Loading...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val querySnapshot = FirebaseFirestore.getInstance()
+                    .collection("expenses")
+                    .whereEqualTo("uid", FirebaseAuth.getInstance().currentUser!!.uid)
+                    .whereEqualTo("monthName", monthName)
+                    .get()
+                    .await()
+
+                val updatedTransactionList = mutableListOf<TransactionModel>()
+                for (document in querySnapshot) {
+                    val transactionModelData = document.toObject(TransactionModel::class.java)
+                    transactionModelData.expenseId = document.id
+                    updatedTransactionList.add(transactionModelData)
+                }
+
+                withContext(Dispatchers.Main) {
+                    transactionList.clear()
+                    transactionList.addAll(updatedTransactionList)
+                    adapter =
+                        TransitionAdapter(transactionList,object : OnItemClickListener {
+                            override fun onItemClick(
+                                transactionModel: TransactionModel,
+                                pos: Int
+                            ) {
+                                deleteItem(transactionModel, pos)
+                            }
+                        })
+                    binding.transactionList.adapter = adapter
+                    adapter.notifyDataSetChanged()
+                    progressDialog.dismiss()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.d("tag", "exception $e")
+                }
+            }
+        }
+    }
 
 }
