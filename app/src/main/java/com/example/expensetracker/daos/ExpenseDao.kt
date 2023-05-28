@@ -22,9 +22,10 @@ class ExpenseDao {
     }
 
 
-    fun getExpenseList(): Task<QuerySnapshot> {
+    fun getExpenseList(monthName:String): Task<QuerySnapshot> {
         return expenseCollection
             .whereEqualTo("uid", FirebaseAuth.getInstance().uid)
+            .whereEqualTo("monthName", monthName)
             .get()
     }
 

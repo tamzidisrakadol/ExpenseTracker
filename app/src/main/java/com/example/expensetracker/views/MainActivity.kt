@@ -21,10 +21,14 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -61,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.imgView.setOnClickListener {
-            startActivity(Intent(this@MainActivity,ProfileActivity::class.java))
+            startActivity(Intent(this@MainActivity, ProfileActivity::class.java))
         }
 
         setUpFireStore()
@@ -71,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         binding.resetBtn.setOnClickListener {
             lifecycleScope.launch {
                 expenseDao.deleteAllTransaction()
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     delay(2000L)
                     setUpFireStore()
                     transactionModelModelList.clear()
@@ -90,34 +94,50 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    //get all transaction data by month-wise
     private fun setUpFireStore() {
-        expenseDao.getExpenseList()
-            .addOnSuccessListener {
-                transactionModelModelList.clear()
-                income = 0L
-                expense = 0L
-                for (document in it) {
-                    val transitions = document.toObject(TransactionModel::class.java)
-                    transitions.expenseId = document.id
-                    if (transitions.type=="income"){
-                        income += transitions.amount
-                    }else{
-                        expense += transitions.amount
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val monthName = Calendar.getInstance()
+                    .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+                val expenseList = expenseDao.getExpenseList(monthName!!).await()
+
+                withContext(Dispatchers.Main) {
+                    transactionModelModelList.clear()
+                    income = 0L
+                    expense = 0L
+
+                    for (document in expenseList) {
+                        val transitions = document.toObject(TransactionModel::class.java)
+                        transitions.expenseId = document.id
+
+                        if (transitions.type == "income") {
+                            income += transitions.amount
+                        } else {
+                            expense += transitions.amount
+                        }
+
+                        transactionModelModelList.add(transitions)
                     }
-                    transactionModelModelList.add(transitions)
-                }
-                val balance = expenseDao.displayRemainBalance(transactionModelModelList)
-                if (balance > 0) {
-                    binding.remainBalanceTV.text = "TK $balance "
-                } else {
-                    binding.remainBalanceTV.text = "TK 0"
-                }
 
-                setupPieChart()
+                    val balance = expenseDao.displayRemainBalance(transactionModelModelList)
+                    if (balance > 0) {
+                        binding.remainBalanceTV.text = "TK $balance "
+                    } else {
+                        binding.remainBalanceTV.text = "TK 0"
+                    }
+                    setupPieChart()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.d("tag", "$e")
+                }
             }
-
+        }
     }
 
+
+    //pie-chart showing
     private fun setupPieChart() {
         val pieList = mutableListOf<PieEntry>()
         val colorList = mutableListOf<Int>()
@@ -141,29 +161,45 @@ class MainActivity : AppCompatActivity() {
         binding.piechart.invalidate()
     }
 
-    private fun loadProfilePic(){
-        val userID = FirebaseAuth.getInstance().currentUser!!.uid
-        val users = FirebaseFirestore.getInstance().collection("users").document(userID)
-        users.get().addOnSuccessListener {
-            if (it.exists()){
-                val user = it.toObject(User::class.java)
-                val imgUrl = user!!.imgUrl
-                val userName = user.displayName
-                Log.d("name","$userName")
 
-                Glide
-                    .with(this)
-                    .load(imgUrl)
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_launcher_foreground)
-                    .into(binding.imgView)
-            }else{
-                Log.d("tag","No such Document")
+    //profile pic from google
+    private fun loadProfilePic() {
+        val userID = FirebaseAuth.getInstance().currentUser!!.uid
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val users = FirebaseFirestore
+                    .getInstance()
+                    .collection("users")
+                    .document(userID)
+                    .get()
+                    .await()
+
+                if (users.exists()) {
+                    val user = users.toObject(User::class.java)
+                    val imgUrl = user!!.imgUrl
+                    val userName = user.displayName
+
+
+                    withContext(Dispatchers.Main) {
+                        Glide
+                            .with(this@MainActivity)
+                            .load(imgUrl)
+                            .centerCrop()
+                            .placeholder(R.drawable.ic_launcher_foreground)
+                            .into(binding.imgView)
+                    }
+                } else {
+                    Log.d("tag", "No such Document")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.d("tag", "$e")
+                }
             }
-        }.addOnFailureListener {
-            Log.d("tag","$it")
         }
     }
+
 
 }
 

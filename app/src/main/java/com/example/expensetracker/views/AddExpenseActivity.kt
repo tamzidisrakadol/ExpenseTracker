@@ -37,9 +37,7 @@ class AddExpenseActivity : AppCompatActivity() {
             pickUpDate(it)
         }
 
-        binding.button.setOnClickListener {
-            startActivity(Intent(this@AddExpenseActivity, FetchDataByDateWise::class.java))
-        }
+
 
         //selectCategory
         val categoryList = resources.getStringArray(R.array.category_section)

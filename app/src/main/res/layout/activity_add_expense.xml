@@ -22,8 +22,8 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="99dp"
         android:fontFamily="@font/oswald"
         android:text="Add Transaction"
         android:textColor="@color/white"
@@ -35,7 +35,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint2"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_500sdp"
+        android:layout_height="@dimen/_450sdp"
         android:background="@drawable/card_bg"
         android:padding="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,7 +43,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.918">
+        app:layout_constraintVertical_bias="0.789">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
@@ -101,9 +101,8 @@
                 android:id="@+id/categorySelectTV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:inputType="none"
-                android:hint="Categeory"/>
-
+                android:hint="Categeory"
+                android:inputType="none" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -111,10 +110,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout4"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginTop="5dp"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_marginTop="9dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
@@ -123,15 +122,15 @@
                 android:id="@+id/dateSelectTV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Select Date"
                 android:gravity="center|left"
+                android:hint="Select Date"
+                android:textColor="@color/black"
+                android:background="@drawable/tv_bg"
                 android:paddingLeft="@dimen/_15sdp"
-                android:textSize="@dimen/_13sdp"/>
-
+                android:textSize="@dimen/_13sdp" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -171,20 +170,7 @@
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
 
-
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
