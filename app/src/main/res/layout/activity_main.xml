@@ -139,26 +139,12 @@
                 android:id="@+id/transitionBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="152dp"
+                android:layout_marginEnd="24dp"
                 android:backgroundTint="#4169E1"
                 android:src="@drawable/creditadd"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <Button
-                android:id="@+id/resetBtn"
-                android:layout_width="@dimen/_160sdp"
-                android:layout_height="@dimen/_45sdp"
-                android:layout_marginStart="16dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/button_bg"
-                android:backgroundTint="#0041C2"
-                android:text="Reset all transition"
-                android:textSize="@dimen/_10sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
