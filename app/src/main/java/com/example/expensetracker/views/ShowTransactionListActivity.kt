@@ -1,13 +1,12 @@
 package com.example.expensetracker.views
 
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,10 +16,7 @@ import com.example.expensetracker.adapter.TransitionAdapter
 import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityShowTransactionListBinding
 import com.example.expensetracker.model.TransactionModel
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -40,21 +36,42 @@ class ShowTransactionListActivity : AppCompatActivity() {
         binding = ActivityShowTransactionListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val monthName = Calendar.getInstance().getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
-        getTransactionList(monthName!!)
+        val currentMonthName = Calendar.getInstance()
+            .getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault())
+        getTransactionList(currentMonthName!!)
 
         val monthsName = resources.getStringArray(R.array.months_name)
-        val arrayAdapter = ArrayAdapter(this,R.layout.dropdown_item_layout,monthsName)
+        val arrayAdapter = ArrayAdapter(this, R.layout.dropdown_item_layout, monthsName)
         binding.autoCompleteSpinner.setAdapter(arrayAdapter)
         binding.autoCompleteSpinner.setOnItemClickListener { parent, view, position, id ->
-            val selectedMonth:String = monthsName[position]
+            val selectedMonth: String = monthsName[position]
             getTransactionList(selectedMonth)
         }
-        binding.transactionList.layoutManager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)
+        binding.transactionList.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+
+        binding.deleteAllTransaction.setOnClickListener {
+            val alertDialog = AlertDialog.Builder(this)
+            alertDialog.setTitle("Delete")
+            alertDialog.setMessage("Do you want to delete all transaction of this month")
+            alertDialog.setCancelable(false)
+            alertDialog.setNegativeButton(
+                "No"
+            ) { dialog, _ -> dialog?.cancel() }
+            alertDialog.setPositiveButton(
+                "Yes"
+            ) { dialog, _ ->
+                deleteAllTransaction(currentMonthName)
+            }
+
+            val alert: AlertDialog = alertDialog.create()
+            alert.show()
+
+        }
     }
 
     //deleteItem from list
-    private fun deleteItem(transactionModel: TransactionModel, pos: Int){
+    private fun deleteItem(transactionModel: TransactionModel, pos: Int) {
         FirebaseFirestore.getInstance()
             .collection("expenses")
             .document(transactionModel.expenseId)
@@ -64,7 +81,7 @@ class ShowTransactionListActivity : AppCompatActivity() {
                 adapter.notifyItemRemoved(pos)
                 getTransactionList(transactionModel.monthName)
                 Toast.makeText(this, "deleted", Toast.LENGTH_SHORT).show()
-                Log.d("delete",transactionModel.expenseId)
+                Log.d("delete", transactionModel.expenseId)
             }.addOnFailureListener {
                 Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
             }
@@ -91,7 +108,7 @@ class ShowTransactionListActivity : AppCompatActivity() {
                     transactionList.clear()
                     transactionList.addAll(updatedTransactionList)
                     adapter =
-                        TransitionAdapter(transactionList,object : OnItemClickListener {
+                        TransitionAdapter(transactionList, object : OnItemClickListener {
                             override fun onItemClick(
                                 transactionModel: TransactionModel,
                                 pos: Int
@@ -107,6 +124,17 @@ class ShowTransactionListActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     Log.d("tag", "exception $e")
                 }
+            }
+        }
+    }
+
+
+    private fun deleteAllTransaction(monthName: String) {
+        lifecycleScope.launch {
+            expenseDao.deleteAllTransaction(monthName)
+            withContext(Dispatchers.Main) {
+                transactionList.clear()
+                getTransactionList(monthName)
             }
         }
     }

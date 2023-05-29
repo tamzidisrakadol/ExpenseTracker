@@ -44,10 +44,12 @@ class ExpenseDao {
     }
 
 
-    fun deleteAllTransaction(): Task<QuerySnapshot> {
+    fun deleteAllTransaction(monthName:String): Task<QuerySnapshot> {
         return expenseCollection
             .whereEqualTo("uid", FirebaseAuth.getInstance().uid)
-            .get().addOnCompleteListener {
+            .whereEqualTo("monthName",monthName)
+            .get()
+            .addOnCompleteListener {
             if (it.isSuccessful) {
                 for (document in it.result) {
                     document.reference.delete()

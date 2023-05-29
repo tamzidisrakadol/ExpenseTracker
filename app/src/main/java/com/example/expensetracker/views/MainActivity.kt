@@ -69,21 +69,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         setUpFireStore()
-
-
-        //reset btn
-        binding.resetBtn.setOnClickListener {
-            lifecycleScope.launch {
-                expenseDao.deleteAllTransaction()
-                withContext(Dispatchers.Main) {
-                    delay(2000L)
-                    setUpFireStore()
-                    transactionModelModelList.clear()
-                }
-
-            }
-        }
-
     }
 
     override fun onResume() {
