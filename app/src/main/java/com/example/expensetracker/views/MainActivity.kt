@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.expensetracker.BuildConfig
 import com.example.expensetracker.R
 import com.example.expensetracker.adapter.OnItemClickListener
 import com.example.expensetracker.adapter.TransitionAdapter
@@ -33,11 +34,10 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var transactionModelModelList = mutableListOf<TransactionModel>()
-
-
     private val expenseDao = ExpenseDao()
     private var income: Long = 0L
     private var expense: Long = 0L
+    private var balance:Long =0L
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                         transactionModelModelList.add(transitions)
                     }
 
-                    val balance = expenseDao.displayRemainBalance(transactionModelModelList)
+                    balance = expenseDao.displayRemainBalance(transactionModelModelList)
                     if (balance > 0) {
                         binding.remainBalanceTV.text = "TK $balance "
                     } else {
@@ -128,7 +128,7 @@ class MainActivity : AppCompatActivity() {
         val colorList = mutableListOf<Int>()
 
         if (income != 0L) {
-            pieList.add(PieEntry(income.toFloat(), "income"))
+            pieList.add(PieEntry(balance.toFloat(), "balance"))
             colorList.add(resources.getColor(R.color.Teal_green))
         }
 

@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.example.expensetracker.BuildConfig
 import com.example.expensetracker.R
 import com.example.expensetracker.daos.UserDaos
 import com.example.expensetracker.databinding.ActivityLoginBinding
@@ -29,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private val RC_SIGN_IN: Int = 123
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
-
+    private val key = BuildConfig.your_web_client_id
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -38,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.your_web_client_id))
+            .requestIdToken(key)
             .requestEmail()
             .build()
 

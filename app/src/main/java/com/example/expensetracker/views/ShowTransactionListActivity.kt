@@ -16,6 +16,7 @@ import com.example.expensetracker.adapter.TransitionAdapter
 import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityShowTransactionListBinding
 import com.example.expensetracker.model.TransactionModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +69,7 @@ class ShowTransactionListActivity : AppCompatActivity() {
             alert.show()
 
         }
+
     }
 
     //deleteItem from list
@@ -138,5 +140,23 @@ class ShowTransactionListActivity : AppCompatActivity() {
             }
         }
     }
+
+
+//    private fun getDesireList(monthName: String){
+//        val foodList = mutableListOf<TransactionModel>()
+//        FirebaseFirestore.getInstance()
+//            .collection("expenses")
+//            .whereEqualTo("uid", FirebaseAuth.getInstance().uid)
+//            .whereEqualTo("monthName", monthName)
+//            .whereEqualTo("category","Food")
+//            .get()
+//            .addOnSuccessListener {
+//               for(document in it){
+//                   val transactionModelData = document.toObject(TransactionModel::class.java)
+//                   foodList.add(transactionModelData)
+//               }
+//                Log.d("size","Food size: ${foodList.size}")
+//            }
+//    }
 
 }
