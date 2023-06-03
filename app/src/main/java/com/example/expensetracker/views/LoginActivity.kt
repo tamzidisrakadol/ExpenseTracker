@@ -97,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUI() {
         val fUser = FirebaseAuth.getInstance().currentUser
         if (fUser != null) {
-            val user = User(fUser.uid, fUser.displayName, fUser.photoUrl.toString())
+            val user = User(fUser.uid, fUser.displayName, fUser.photoUrl.toString(), userEmail = fUser.email!!)
             val userDaos = UserDaos()
             userDaos.addUser(user)
 

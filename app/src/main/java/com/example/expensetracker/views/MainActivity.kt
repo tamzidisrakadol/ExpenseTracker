@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -149,17 +150,9 @@ class MainActivity : AppCompatActivity() {
 
     //profile pic from google
     private fun loadProfilePic() {
-        val userID = FirebaseAuth.getInstance().currentUser!!.uid
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val users = FirebaseFirestore
-                    .getInstance()
-                    .collection("users")
-                    .document(userID)
-                    .get()
-                    .await()
-
+                val users = expenseDao.getUserInfo()
                 if (users.exists()) {
                     val user = users.toObject(User::class.java)
                     val imgUrl = user!!.imgUrl

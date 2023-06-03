@@ -142,21 +142,20 @@ class ShowTransactionListActivity : AppCompatActivity() {
     }
 
 
-//    private fun getDesireList(monthName: String){
-//        val foodList = mutableListOf<TransactionModel>()
-//        FirebaseFirestore.getInstance()
-//            .collection("expenses")
-//            .whereEqualTo("uid", FirebaseAuth.getInstance().uid)
-//            .whereEqualTo("monthName", monthName)
-//            .whereEqualTo("category","Food")
-//            .get()
-//            .addOnSuccessListener {
-//               for(document in it){
-//                   val transactionModelData = document.toObject(TransactionModel::class.java)
-//                   foodList.add(transactionModelData)
-//               }
-//                Log.d("size","Food size: ${foodList.size}")
-//            }
-//    }
+    private fun getDesireList(monthName: String){
+        val foodList = mutableListOf<TransactionModel>()
+        FirebaseFirestore.getInstance()
+            .collection("expenses")
+            .whereEqualTo("uid", FirebaseAuth.getInstance().uid)
+            .whereEqualTo("monthName", monthName)
+            .get()
+            .addOnSuccessListener {
+               for(document in it){
+                   val transactionModelData = document.toObject(TransactionModel::class.java)
+                   foodList.add(transactionModelData)
+               }
+                Log.d("size","Food size: ${foodList.size}")
+            }
+    }
 
 }

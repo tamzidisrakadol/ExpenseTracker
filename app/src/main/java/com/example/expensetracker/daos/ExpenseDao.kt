@@ -4,10 +4,12 @@ import android.util.Log
 import com.example.expensetracker.model.TransactionModel
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class ExpenseDao {
 
@@ -60,4 +62,11 @@ class ExpenseDao {
         }
     }
 
+   suspend fun getUserInfo():DocumentSnapshot{
+        return FirebaseFirestore.getInstance()
+            .collection("users")
+            .document( FirebaseAuth.getInstance().currentUser!!.uid)
+            .get()
+            .await()
+    }
 }
