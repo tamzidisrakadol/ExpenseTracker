@@ -1,5 +1,6 @@
 package com.example.expensetracker.views
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,7 +22,15 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         loadUserInfo()
+
+        binding.signOutBtn.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this@ProfileActivity, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
     }
 

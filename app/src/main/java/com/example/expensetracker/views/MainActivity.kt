@@ -56,15 +56,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, ShowTransactionListActivity::class.java))
         }
 
-
-        //sign out btn
-        binding.signOutBtn.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
         binding.imgView.setOnClickListener {
             startActivity(Intent(this@MainActivity, ProfileActivity::class.java))
         }
