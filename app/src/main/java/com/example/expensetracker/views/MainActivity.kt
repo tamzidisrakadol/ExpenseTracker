@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
 
         }
+        binding.recieptImageBtn.setOnClickListener {
+            startActivity(Intent(this@MainActivity,ReceiptTrackingActivity::class.java))
+        }
+
+
         binding.showListTV.setOnClickListener {
             startActivity(Intent(this@MainActivity, ShowTransactionListActivity::class.java))
         }
