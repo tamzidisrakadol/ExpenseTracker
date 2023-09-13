@@ -1,5 +1,12 @@
 package com.example.expensetracker.views
 
+/* TODO: Expense Tracker
+    1) user will be notify in the 28th day  that how many money he saves.
+    2)Receipt tracking
+    3)Ui update in Check network connection
+    4)bug fix in reminder class
+*/
+
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -17,9 +24,11 @@ import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityMainBinding
 import com.example.expensetracker.model.TransactionModel
 import com.example.expensetracker.model.User
+import com.example.expensetracker.utils.NetworkConnection
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +43,7 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var networkConnection:NetworkConnection
     private var transactionModelModelList = mutableListOf<TransactionModel>()
     private val expenseDao = ExpenseDao()
     private var income: Long = 0L
@@ -43,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        networkConnection = NetworkConnection(applicationContext)
 
         loadProfilePic()
 
@@ -65,9 +77,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        income = 0L
-        expense = 0L
-        setUpFireStore()
+            income = 0L
+            expense = 0L
+            setUpFireStore()
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        networkConnection.observe(this){
+                if (it){
+   //                 val snackbar = Snackbar.make(binding.main,"network connection restored",Snackbar.LENGTH_SHORT)
+   //                 snackbar.show()
+                }else{
+                    val snackbar = Snackbar.make(binding.main,"network connection lost",Snackbar.LENGTH_SHORT)
+                    snackbar.show()
+                }
+        }
+
     }
 
 
