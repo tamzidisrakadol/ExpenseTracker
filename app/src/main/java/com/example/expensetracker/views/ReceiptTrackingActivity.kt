@@ -42,6 +42,9 @@ class ReceiptTrackingActivity : AppCompatActivity() {
         binding.imageView.setOnClickListener {
             openCameraOrGallery()
         }
+        binding.showReceiptBtn.setOnClickListener {
+            startActivity(Intent(this@ReceiptTrackingActivity,ShowReceiptActivity::class.java))
+        }
 
     }
 

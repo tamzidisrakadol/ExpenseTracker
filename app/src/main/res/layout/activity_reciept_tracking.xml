@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="@dimen/_260sdp"
-        android:layout_height="@dimen/_350sdp"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_300sdp"
         android:layout_marginTop="60dp"
         android:scaleType="fitXY"
         android:src="@drawable/addimg"
@@ -28,6 +28,18 @@
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+
+    <Button
+        android:id="@+id/showReceiptBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="Show Receipt"
+        app:layout_constraintEnd_toEndOf="@+id/addReceiptbtn"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="@+id/addReceiptbtn"
+        app:layout_constraintTop_toBottomOf="@+id/addReceiptbtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
