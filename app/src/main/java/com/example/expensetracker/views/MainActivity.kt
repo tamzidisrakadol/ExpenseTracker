@@ -7,11 +7,18 @@ package com.example.expensetracker.views
     4)bug fix in reminder class
 */
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -60,9 +67,9 @@ class MainActivity : AppCompatActivity() {
 
         //add transitionBtn
         binding.transitionBtn.setOnClickListener {
-            val intent = Intent(this@MainActivity, AddExpenseActivity::class.java)
-            startActivity(intent)
-
+//            val intent = Intent(this@MainActivity, AddExpenseActivity::class.java)
+//            startActivity(intent)
+        showBottomDialog()
         }
         binding.recieptImageBtn.setOnClickListener {
             startActivity(Intent(this@MainActivity,ReceiptTrackingActivity::class.java))
@@ -200,6 +207,28 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+
+    //open bottom-sheet
+    private fun showBottomDialog(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.bottom_sheet_layout)
+
+        val transactionLayout = dialog.findViewById<CardView>(R.id.addTransactionCV)
+
+        transactionLayout.setOnClickListener {
+            dialog.dismiss()
+            startActivity(Intent(this,AddExpenseActivity::class.java))
+        }
+
+
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
 
