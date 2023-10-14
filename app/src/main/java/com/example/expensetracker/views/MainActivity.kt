@@ -17,16 +17,9 @@ import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.expensetracker.BuildConfig
 import com.example.expensetracker.R
-import com.example.expensetracker.adapter.OnItemClickListener
-import com.example.expensetracker.adapter.TransitionAdapter
 import com.example.expensetracker.daos.ExpenseDao
 import com.example.expensetracker.databinding.ActivityMainBinding
 import com.example.expensetracker.model.TransactionModel
@@ -36,12 +29,8 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -67,18 +56,9 @@ class MainActivity : AppCompatActivity() {
 
         //add transitionBtn
         binding.transitionBtn.setOnClickListener {
-//            val intent = Intent(this@MainActivity, AddExpenseActivity::class.java)
-//            startActivity(intent)
         showBottomDialog()
         }
-        binding.recieptImageBtn.setOnClickListener {
-            startActivity(Intent(this@MainActivity,ReceiptTrackingActivity::class.java))
-        }
 
-
-        binding.showListTV.setOnClickListener {
-            startActivity(Intent(this@MainActivity, ShowTransactionListActivity::class.java))
-        }
 
         binding.imgView.setOnClickListener {
             startActivity(Intent(this@MainActivity, ProfileActivity::class.java))
@@ -216,11 +196,26 @@ class MainActivity : AppCompatActivity() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.bottom_sheet_layout)
 
-        val transactionLayout = dialog.findViewById<CardView>(R.id.addTransactionCV)
+        val addTransactionlayout = dialog.findViewById<CardView>(R.id.addTransactionCV)
+        val showTransactionlayout = dialog.findViewById<CardView>(R.id.showTransactionCV)
+        val addReceiptlayout = dialog.findViewById<CardView>(R.id.addreceiptCV)
+        val showreceiptlayout = dialog.findViewById<CardView>(R.id.showreceiptlistCV)
 
-        transactionLayout.setOnClickListener {
+        addTransactionlayout.setOnClickListener {
             dialog.dismiss()
             startActivity(Intent(this,AddExpenseActivity::class.java))
+        }
+
+        showTransactionlayout.setOnClickListener {
+            startActivity(Intent(this@MainActivity, ShowTransactionListActivity::class.java))
+        }
+
+        addReceiptlayout.setOnClickListener {
+            startActivity(Intent(this@MainActivity,ReceiptTrackingActivity::class.java))
+        }
+
+        showreceiptlayout.setOnClickListener {
+            startActivity(Intent(this@MainActivity,ShowReceiptActivity::class.java))
         }
 
 

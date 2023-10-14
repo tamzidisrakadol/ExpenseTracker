@@ -10,6 +10,5 @@
         android:top="@dimen/_10sdp"
         android:bottom="@dimen/_10sdp"/>
 
-    <stroke android:width="2dp"
-        android:color="@color/black"/>
+
 </shape>
