@@ -2,7 +2,7 @@ package com.example.expensetracker.views
 
 /* TODO: Expense Tracker
     1) user will be notify in the 28th day  that how many money he saves.
-    2)Receipt tracking
+    2)Receipt tracking -> done
     3)Ui update in Check network connection
     4)bug fix in reminder class
 */
@@ -54,12 +54,14 @@ class MainActivity : AppCompatActivity() {
 
         loadProfilePic()
 
-        //add transitionBtn
-        binding.transitionBtn.setOnClickListener {
-        showBottomDialog()
+
+
+        binding.moreFeatureBtn.setOnClickListener {
+            showBottomDialog()
         }
 
 
+        //profile btn
         binding.imgView.setOnClickListener {
             startActivity(Intent(this@MainActivity, ProfileActivity::class.java))
         }
@@ -200,6 +202,8 @@ class MainActivity : AppCompatActivity() {
         val showTransactionlayout = dialog.findViewById<CardView>(R.id.showTransactionCV)
         val addReceiptlayout = dialog.findViewById<CardView>(R.id.addreceiptCV)
         val showreceiptlayout = dialog.findViewById<CardView>(R.id.showreceiptlistCV)
+        val reminderLayout = dialog.findViewById<CardView>(R.id.addreminderLayout)
+
 
         addTransactionlayout.setOnClickListener {
             dialog.dismiss()
@@ -216,6 +220,10 @@ class MainActivity : AppCompatActivity() {
 
         showreceiptlayout.setOnClickListener {
             startActivity(Intent(this@MainActivity,ShowReceiptActivity::class.java))
+        }
+
+        reminderLayout.setOnClickListener {
+            startActivity(Intent(this@MainActivity,ReminderActivity::class.java))
         }
 
 

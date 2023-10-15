@@ -37,8 +37,8 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/addexpense"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -81,8 +81,8 @@
 
             <ImageView
                 android:id="@+id/img4"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/list"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,11 +93,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:fontFamily="@font/arvo"
-                android:text="All transaction"
+                android:text="Show transaction"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15sdp"
                 app:layout_constraintEnd_toStartOf="@+id/img4"
-                app:layout_constraintHorizontal_bias="0.228"
+                app:layout_constraintHorizontal_bias="0.372"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -126,8 +126,8 @@
 
             <ImageView
                 android:id="@+id/img5"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/track"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -170,8 +170,8 @@
 
             <ImageView
                 android:id="@+id/img6"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/receiptlist"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -195,5 +195,48 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/addreminderLayout"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_60sdp"
+        android:layout_marginTop="28dp"
+        app:cardCornerRadius="@dimen/_10sdp"
+        android:backgroundTint="#357EC7"
+        app:cardElevation="@dimen/_15sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showreceiptlistCV">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ImageView
+                android:id="@+id/img7"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/clock"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/arvo"
+                android:text="Add reminder"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                app:layout_constraintEnd_toStartOf="@+id/img7"
+                app:layout_constraintHorizontal_bias="0.28"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
