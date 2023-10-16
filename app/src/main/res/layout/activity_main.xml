@@ -39,35 +39,60 @@
                 android:id="@+id/remainBalanceTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="176dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/arvo"
                 android:text="TK 0"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgView"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_width="@dimen/_35sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/ic_launcher_foreground"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="18dp"
+                android:layout_marginEnd="15dp"
                 android:background="@android:color/transparent"
                 android:contentDescription="notification"
                 android:src="@drawable/notification"
-                app:layout_constraintEnd_toStartOf="@+id/imgView"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/userNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/arvo"
+                android:textSize="@dimen/_12sdp"
+                android:text="Areen"
+                app:layout_constraintStart_toEndOf="@+id/imgView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Welcome,"
+                android:fontFamily="@font/arvo"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/imgView"
+                app:layout_constraintTop_toBottomOf="@+id/userNameTV" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

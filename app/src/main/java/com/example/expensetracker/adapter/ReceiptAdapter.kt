@@ -1,14 +1,17 @@
 package com.example.expensetracker.adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.expensetracker.R
 import com.example.expensetracker.databinding.ReceiptitemlayoutBinding
 import com.example.expensetracker.model.ReceiptModal
 
-class ReceiptAdapter(private val receiptList:List<ReceiptModal>, val context: Context,private val receiptItemClickListner: ReceiptItemClickListner):RecyclerView.Adapter<ReceiptAdapter.ViewHolder>() {
+class ReceiptAdapter(private val receiptList:List<ReceiptModal>, val context: Context,private val receiptItemClickListener: ReceiptItemClickListener):RecyclerView.Adapter<ReceiptAdapter.ViewHolder>() {
     class ViewHolder(val receiptItemlayoutBinding: ReceiptitemlayoutBinding):RecyclerView.ViewHolder(receiptItemlayoutBinding.root){
 
     }
@@ -28,11 +31,20 @@ class ReceiptAdapter(private val receiptList:List<ReceiptModal>, val context: Co
         Glide.with(context).load(receiptModal.imgUrl).into(holder.receiptItemlayoutBinding.receiptImg)
 
         holder.receiptItemlayoutBinding.imageButton.setOnClickListener {
-            receiptItemClickListner.onItemClick(receiptModal,position)
+            receiptItemClickListener.onItemClick(receiptModal,position)
+        }
+
+        holder.receiptItemlayoutBinding.root.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            val customLayout: View = LayoutInflater.from(context).inflate(R.layout.custom_alert_dialog,null)
+            builder.setView(customLayout)
+            Glide.with(context).load(receiptModal.imgUrl).into(customLayout.findViewById(R.id.receiptImgAlert))
+            val dialog:AlertDialog = builder.create()
+            dialog.show()
         }
     }
 }
 
-interface ReceiptItemClickListner{
+interface ReceiptItemClickListener{
     fun onItemClick(receiptModal: ReceiptModal,pos:Int)
 }

@@ -179,6 +179,7 @@ class MainActivity : AppCompatActivity() {
                             .centerCrop()
                             .placeholder(R.drawable.ic_launcher_foreground)
                             .into(binding.imgView)
+                        binding.userNameTV.text=userName
                     }
                 } else {
                     Log.d("tag", "No such Document")

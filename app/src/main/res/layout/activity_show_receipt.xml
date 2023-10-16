@@ -6,6 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".views.ShowReceiptActivity">
 
+
+    <TextView
+        android:id="@+id/visibleTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No receipt added"
+        android:fontFamily="@font/hammersmith_one"
+        android:textStyle="bold"
+        android:textColor="#646060"
+        android:visibility="visible"
+        android:textSize="@dimen/_18sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/receiptList"
         android:layout_width="match_parent"
@@ -13,6 +29,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
+        android:visibility="gone"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
